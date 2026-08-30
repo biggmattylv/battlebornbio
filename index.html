@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Battle Born BIO — Applied Research Reagents</title>
+  <meta name="description" content="Battle Born BIO provides lot-verified research peptides and reference reagents. Strictly for research purposes only."/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#1A3B43',
+              dark: '#222831',
+              silver: '#D0D5DD',
+              gold: '#C1A26B'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-stone-50 text-stone-900 flex min-h-screen flex-col font-sans">
+
+  <header class="border-b border-stone-200 bg-white sticky top-0 z-20 shadow-sm">
+    <div class="bg-brand-teal text-white text-xs sm:text-sm text-center py-2 px-4 font-medium tracking-wide">
+      <span>🛡️ Battle Born BIO — Lot Verified Applied Research Reagents</span>
+    </div>
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3">
+      <a class="flex items-center gap-3" href="/">
+        <img src="brand/logo.png" alt="Battle Born BIO Logo" class="h-12 w-auto rounded-lg shadow-sm" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
+        <div>
+          <span class="block font-bold text-lg text-brand-dark leading-tight">Battle Born BIO</span>
+          <span class="hidden sm:block text-[10px] uppercase tracking-widest text-stone-500 font-semibold">Applied Research · Est. 2024</span>
+        </div>
+      </a>
+      <nav class="flex items-center gap-6 text-sm font-medium">
+        <a href="#catalog" class="text-stone-700 hover:text-brand-teal">Catalog</a>
+        <button onclick="toggleCart()" class="relative flex items-center gap-2 bg-brand-teal text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition">
+          🛒 Cart (<span id="cart-count">0</span>)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <section class="relative bg-brand-dark text-white border-b border-stone-300 py-16 px-5">
+      <div class="max-w-6xl mx-auto grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr]">
+        <div>
+          <img src="brand/logo.png" alt="Battle Born BIO Logo" class="h-20 w-auto mb-6 rounded-xl shadow-lg" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
+          <h1 class="text-3xl sm:text-4xl font-bold mb-4">Precision Reagents Built for Research</h1>
+          <p class="text-stone-300 text-lg leading-relaxed">Battle Born BIO stocks reference compounds in small batches so each lot can be rigorously tested. Certificates of Analysis are filed directly under each lot seal.</p>
+          <div class="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-gold/20 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-amber-200 border border-brand-gold/40">
+            ⚠️ Strictly for research purposes only. Not for human or veterinary use.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalog" class="max-w-6xl mx-auto px-5 py-14">
+      <div class="mb-8 flex items-end justify-between">
+        <h2 class="text-2xl font-bold text-brand-dark">Research Reagents Catalog</h2>
+      </div>
+      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+    </section>
+  </main>
+
+  <div id="cart-drawer" class="fixed inset-0 bg-black/50 z-50 hidden flex justify-end">
+    <div class="bg-white w-full max-w-md h-full p-6 flex flex-col justify-between overflow-y-auto">
+      <div>
+        <div class="flex justify-between items-center border-b pb-4 mb-4">
+          <h3 class="text-xl font-bold text-brand-dark">Research Reagent Order</h3>
+          <button onclick="toggleCart()" class="text-stone-500 hover:text-black text-xl font-bold">✕</button>
+        </div>
+        
+        <div id="fs-success" class="hidden mb-4 p-4 bg-emerald-50 border border-emerald-300 text-emerald-800 text-sm rounded-lg font-medium">
+          ✅ Thank you! Your order request has been successfully submitted. We will process it shortly.
+        </div>
+        <div id="fs-error" class="hidden mb-4 p-4 bg-red-50 border border-red-300 text-red-800 text-sm rounded-lg font-medium">
+          ⚠️ Something went wrong submitting your order. Please try again.
+        </div>
+
+        <div id="cart-items" class="space-y-4">
+          <p class="text-stone-500 text-sm">Your order list is currently empty.</p>
+        </div>
+      </div>
+
+      <div class="border-t pt-4 mt-6">
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-stone-600 mb-1">PROMO CODE</label>
+          <div class="flex gap-2">
+            <input type="text" id="promo-input" placeholder="ENTER CODE" class="w-full border p-2 rounded text-sm uppercase"/>
+            <button type="button" onclick="applyPromoCode()" class="bg-brand-teal text-white text-xs px-3 py-2 rounded font-semibold hover:bg-slate-800 transition">Apply</button>
+          </div>
+          <p id="promo-msg" class="text-xs mt-1 font-semibold"></p>
+        </div>
+
+        <div class="space-y-1 mb-4 border-t pt-2">
+          <div class="flex justify-between text-sm text-stone-600">
+            <span>Subtotal:</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <div id="discount-row" class="flex justify-between text-sm text-emerald-600 font-semibold hidden">
+            <span>Discount:</span>
+            <span id="cart-discount">-$0.00</span>
+          </div>
+          <div class="flex justify-between text-lg font-bold text-brand-dark pt-1">
+            <span>Estimated Total:</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+        </div>
+
+        <form id="order-form" action="https://formspree.io/f/xgaevlnl" method="POST">
+          <input type="hidden" name="Order_Details" id="order-details-input"/>
+          <input type="hidden" name="Total_Amount" id="order-total-input"/>
+          <input type="hidden" name="Applied_Promo_Code" id="order-promo-input" value="None"/>
+
+          <div class="space-y-3 mb-4">
+            <input type="text" name="Institution_Name" placeholder="Institution / Company Name" required class="w-full border p-2 rounded text-sm" data-fs-field/>
+            <input type="email" name="Researcher_Email" placeholder="Researcher Email Address" required class="w-full border p-2 rounded text-sm" data-fs-field/>
+            <input type="text" name="Shipping_Address" placeholder="Shipping Address" required class="w-full border p-2 rounded text-sm" data-fs-field/>
+            <textarea name="Order_Notes" placeholder="Additional Research Notes (Optional)" class="w-full border p-2 rounded text-sm h-20" data-fs-field></textarea>
+          </div>
+
+          <button type="submit" id="submit-btn" data-fs-submit-btn class="w-full bg-brand-teal text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition disabled:opacity-50">
+            Submit Order Request →
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="product-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative flex flex-col md:flex-row">
+      <button onclick="closeProductModal()" class="absolute top-3 right-3 text-stone-500 hover:text-black text-xl font-bold bg-stone-100 rounded-full w-8 h-8 flex items-center justify-center z-10">✕</button>
+      <div class="md:w-1/2 bg-stone-100 p-6 flex items-center justify-center">
+        <img id="modal-image" src="" alt="Product Vial" class="max-h-72 object-contain"/>
+      </div>
+      <div class="md:w-1/2 p-6 flex flex-col justify-between">
+        <div>
+          <span id="modal-category" class="text-xs font-semibold text-brand-gold uppercase tracking-wider"></span>
+          <h2 id="modal-title" class="text-2xl font-bold text-brand-dark mt-1"></h2>
+          <p id="modal-price" class="text-xl font-bold text-brand-teal mt-2"></p>
+          <p id="modal-desc" class="text-sm text-stone-600 mt-4 leading-relaxed"></p>
+          <div class="mt-4 border-t pt-3 space-y-1 text-xs text-stone-500">
+            <div><strong>CAS Number:</strong> <span id="modal-cas"></span></div>
+            <div><strong>Chemical Formula:</strong> <span id="modal-formula"></span></div>
+            <div><strong>Purity Standard:</strong> ≥98% Lot-Verified</div>
+          </div>
+        </div>
+        <div class="mt-6 space-y-2">
+          <a id="modal-coa-btn" href="#" target="_blank" class="w-full block text-center border border-brand-teal text-brand-teal py-2 rounded-lg text-sm font-semibold hover:bg-stone-50 transition">
+            📄 View Batch Certificate of Analysis (COA)
+          </a>
+          <button id="modal-add-btn" class="w-full bg-brand-teal text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition">
+            + Add to Order Request
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-stone-200 bg-white mt-12">
+    <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="text-sm text-stone-500">
+        © 2026 <strong>Battle Born BIO</strong>. All rights reserved.
+      </div>
+      <div class="text-xs text-stone-600 font-semibold uppercase tracking-wider">
+        Research Use Only · Not For Human Consumption
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let products = [
+      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 45.00, image: 'products/R3 10.png', coa: 'coas/r3-10mg-coa.pdf', cas: 'N/A', formula: 'Recombinant Peptide', desc: 'Long-chain growth-factor analogue reagent for cell-culture and proliferation studies.' },
+      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 80.00, image: 'products/R3 20.png', coa: 'coas/r3-20mg-coa.pdf', cas: 'N/A', formula: 'Recombinant Peptide', desc: 'High-concentration growth-factor analogue reagent intended for comparative vitro assays.' },
+      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 85.00, image: 'products/BPC-157 10.png', coa: 'coas/bpc-157-10mg-coa.pdf', cas: '137525-51-0', formula: 'C62H98N16O22', desc: 'Pentadecapeptide reference reagent synthesized for tissue culture research.' },
+      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, image: 'products/5Amino1MQ 50.png', coa: 'coas/5-amino-1mq-50mg-coa.pdf', cas: '42464-96-0', formula: 'C10H11N2+', desc: 'Small-molecule NNMT enzyme inhibitor for metabolic pathway research.' },
+      { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, image: 'products/GHK-cu 100.png', coa: 'coas/ghk-cu-100mg-coa.pdf', cas: '49557-75-7', formula: 'C14H24CuN6O4', desc: 'Copper-tripeptide complex reagent for matrix cellular assays.' },
+      { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, image: 'products/Tesamorelin 10.png', coa: 'coas/tesamorelin-coa.pdf', cas: '218949-48-5', formula: 'C221H366N72O67S1', desc: 'GHRH-analogue reference peptide for neuroendocrine research.' },
+      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, image: 'products/NAD+ 1000.png', coa: 'coas/nad-500mg-coa.pdf', cas: '53-84-9', formula: 'C21H27N7O14P2', desc: 'Nicotinamide adenine dinucleotide reagent involved in enzymatic redox reactions.' },
+      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, image: 'products/SS-31 10.png', coa: 'coas/ss-31-10mg-coa.pdf', cas: '736992-21-2', formula: 'C32H49N9O5', desc: 'Mitochondria-targeted tetrapeptide reagent for cellular bioenergetics.' },
+      { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, image: 'products/SS-31 50.png', coa: 'coas/ss-31-50mg-coa.pdf', cas: '736992-21-2', formula: 'C32H49N9O5', desc: 'High-yield mitochondria-targeted tetrapeptide reagent for bioenergetics.' },
+      { id: '10', name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, image: 'products/Mots-C 20.png', coa: 'coas/mots-c-20mg-coa.pdf', cas: '1627580-64-6', formula: 'C101H152N28O22S2', desc: 'Mitochondrial-derived peptide reagent for metabolic signalling research.' },
+      { id: '11', name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, image: 'products/Selank 10.png', coa: 'coas/selank-10mg-coa.pdf', cas: '129954-34-3', formula: 'C33H57N11O9', desc: 'Synthetic heptapeptide reagent for regulatory peptide signaling research.' },
+      { id: '12', name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, image: 'products/Semax 10.png', coa: 'coas/semax-10mg-coa.pdf', cas: '80714-61-0', formula: 'C37H51N9O10S', desc: 'ACTH-derived peptide reagent for cellular signalling analysis.' },
+      { id: '13', name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, image: 'products/Semaglutide 20.png', coa: 'coas/semaglutide-20mg-coa.pdf', cas: '910463-68-2', formula: 'C187H291N45O59', desc: 'GLP-1 analogue reference reagent for metabolic and endocrine receptor research.' }
+    ];
+
+    let cart = [];
+    let appliedDiscountRate = 0;
+    let appliedPromoCodeName = "None";
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = products.map(p => `
+        <div class="rounded-2xl border border-stone-200 bg-white overflow-hidden shadow-sm flex flex-col justify-between">
+          <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
+            <div class="w-full h-64 bg-stone-100 flex items-center justify-center p-4">
+              <img src="${encodeURI(p.image)}" alt="${p.name}" class="max-h-full max-w-full object-contain hover:scale-105 transition duration-200" onerror="this.src='products/Blank Vial.png'"/>
+            </div>
+            <div class="p-5">
+              <div class="text-xs font-semibold text-brand-gold uppercase mb-1">${p.category}</div>
+              <h3 class="text-xl font-bold text-brand-dark">${p.name}</h3>
+              <p class="text-sm text-stone-600 mt-2 line-clamp-2">${p.desc}</p>
+            </div>
+          </div>
+          <div class="p-5 pt-0 flex items-center justify-between mt-4">
+            <span class="text-lg font-bold text-brand-dark">$${p.price.toFixed(2)}</span>
+            <div class="flex gap-2">
+              <button onclick="openProductModal('${p.id}')" class="border border-stone-300 text-stone-700 text-sm px-3 py-2 rounded-lg hover:bg-stone-100 transition">Details</button>
+              <button onclick="addToCart('${p.id}')" class="bg-brand-teal text-white text-sm px-4 py-2 rounded-lg hover:bg-slate-800 transition font-medium">+ Add</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openProductModal(id) {
+      const product = products.find(p => p.id === id);
+      if (!product) return;
+      document.getElementById('modal-title').innerText = product.name;
+      document.getElementById('modal-category').innerText = product.category;
+      document.getElementById('modal-image').src = encodeURI(product.image);
+      document.getElementById('modal-price').innerText = `$${product.price.toFixed(2)}`;
+      document.getElementById('modal-desc').innerText = product.desc;
+      document.getElementById('modal-cas').innerText = product.cas;
+      document.getElementById('modal-formula').innerText = product.formula;
+      document.getElementById('modal-coa-btn').href = product.coa;
+      document.getElementById('modal-add-btn').onclick = function() { addToCart(product.id); closeProductModal(); };
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+
+    function addToCart(id) {
+      const item = products.find(p => p.id === id);
+      const existing = cart.find(c => c.id === id);
+      if (existing) { existing.qty++; } else { cart.push({ ...item, qty: 1 }); }
+      updateCartUI();
+      document.getElementById('cart-drawer').classList.remove('hidden');
+    }
+
+    function updateQty(id, change) {
+      const item = cart.find(c => c.id === id);
+      if (!item) return;
+      item.qty += change;
+      if (item.qty <= 0) {
+        cart = cart.filter(c => c.id !== id);
+      }
+      updateCartUI();
+    }
+
+    function applyPromoCode() {
+      const codeInput = document.getElementById('promo-input').value.trim().toUpperCase();
+      const msg = document.getElementById('promo-msg');
+      const totalItemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+      if (codeInput === "BIGG") {
+        if (totalItemCount >= 2) {
+          appliedDiscountRate = 0.20;
+          appliedPromoCodeName = "BIGG (20% Off 2+ Items)";
+          msg.className = "text-xs mt-1 font-semibold text-emerald-600";
+          msg.innerText = "20% Discount Applied!";
+        } else {
+          appliedDiscountRate = 0;
+          appliedPromoCodeName = "None";
+          msg.className = "text-xs mt-1 font-semibold text-amber-600";
+          msg.innerText = "BIGG requires purchasing 2 or more items.";
+          updateCartUI();
+          return;
+        }
+      } else if (codeInput === "RESEARCH10") {
+        appliedDiscountRate = 0.10;
+        appliedPromoCodeName = "RESEARCH10 (10% Off)";
+        msg.className = "text-xs mt-1 font-semibold text-emerald-600";
+        msg.innerText = "10% Discount Applied!";
+      } else if (codeInput === "BATTLEBORN20") {
+        appliedDiscountRate = 0.20;
+        appliedPromoCodeName = "BATTLEBORN20 (20% Off)";
+        msg.className = "text-xs mt-1 font-semibold text-emerald-600";
+        msg.innerText = "20% Discount Applied!";
+      } else if (codeInput === "") {
+        appliedDiscountRate = 0;
+        appliedPromoCodeName = "None";
+        msg.innerText = "";
+      } else {
+        appliedDiscountRate = 0;
+        appliedPromoCodeName = "None";
+        msg.className = "text-xs mt-1 font-semibold text-red-600";
+        msg.innerText = "Invalid Promo Code";
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const totalItemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').innerText = totalItemCount;
+
+      const cartContainer = document.getElementById('cart-items');
+      const subtotalContainer = document.getElementById('cart-subtotal');
+      const discountRow = document.getElementById('discount-row');
+      const discountContainer = document.getElementById('cart-discount');
+      const totalContainer = document.getElementById('cart-total');
+
+      if (appliedPromoCodeName.startsWith("BIGG") && totalItemCount < 2) {
+        appliedDiscountRate = 0;
+        appliedPromoCodeName = "None";
+        const msg = document.getElementById('promo-msg');
+        if (msg) {
+          msg.className = "text-xs mt-1 font-semibold text-amber-600";
+          msg.innerText = "BIGG removed (requires 2+ items).";
+        }
+      }
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = '<p class="text-stone-500 text-sm">Your order list is empty.</p>';
+        subtotalContainer.innerText = '$0.00';
+        totalContainer.innerText = '$0.00';
+        discountRow.classList.add('hidden');
+        return;
+      }
+
+      let subtotal = 0;
+      let orderSummaryText = [];
+
+      cartContainer.innerHTML = cart.map(item => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+        orderSummaryText.push(`${item.name} (Qty: ${item.qty}) - $${itemTotal.toFixed(2)}`);
+        return `
+          <div class="flex justify-between items-center text-sm border-b pb-2">
+            <div>
+              <div class="font-bold text-brand-dark">${item.name}</div>
+              <div class="text-stone-500">$${item.price.toFixed(2)} each</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center border rounded bg-stone-50">
+                <button type="button" onclick="updateQty('${item.id}', -1)" class="px-2 py-0.5 text-stone-600 font-bold hover:bg-stone-200 rounded-l">-</button>
+                <span class="px-2 text-xs font-bold">${item.qty}</span>
+                <button type="button" onclick="updateQty('${item.id}', 1)" class="px-2 py-0.5 text-stone-600 font-bold hover:bg-stone-200 rounded-r">+</button>
+              </div>
+              <span class="font-bold text-brand-teal w-16 text-right">$${itemTotal.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const discountAmount = subtotal * appliedDiscountRate;
+      const finalTotal = subtotal - discountAmount;
+
+      subtotalContainer.innerText = `$${subtotal.toFixed(2)}`;
+      if (appliedDiscountRate > 0) {
+        discountRow.classList.remove('hidden');
+        discountContainer.innerText = `-$${discountAmount.toFixed(2)}`;
+      } else {
+        discountRow.classList.add('hidden');
+      }
+
+      totalContainer.innerText = `$${finalTotal.toFixed(2)}`;
+
+      document.getElementById('order-details-input').value = orderSummaryText.join(' | ');
+      document.getElementById('order-total-input').value = `$${finalTotal.toFixed(2)}`;
+      document.getElementById('order-promo-input').value = appliedPromoCodeName;
+    }
+
+    function toggleCart() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
+
+    // AJAX Formspree Handler
+    document.getElementById('order-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (cart.length === 0) {
+        alert('Please add items to your cart before submitting.');
+        return;
+      }
+
+      const form = e.target;
+      const data = new FormData(form);
+      const submitBtn = document.getElementById('submit-btn');
+      const successBox = document.getElementById('fs-success');
+      const errorBox = document.getElementById('fs-error');
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Submitting Request...";
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          successBox.classList.remove('hidden');
+          errorBox.classList.add('hidden');
+          cart = [];
+          form.reset();
+          updateCartUI();
+        } else {
+          errorBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorBox.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit Order Request →";
+      }
+    });
+
+    renderProducts();
+  </script>
+</body>
+</html>
