@@ -88,12 +88,12 @@
         <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">REAGENT CATALOG</h2>
       </div>
       <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Loaded via JavaScript -->
+        <!-- Dynamic Product Cards Loaded via JS -->
       </div>
     </section>
   </main>
 
-  <!-- Drawer Cart -->
+  <!-- Slide-out Drawer Cart -->
   <div id="cart-drawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex justify-end">
     <div class="bg-cyber-card border-l border-cyber-magenta/50 w-full max-w-md h-full p-6 flex flex-col justify-between overflow-y-auto">
       <div>
@@ -103,7 +103,7 @@
         </div>
         
         <div id="fs-success" class="hidden mb-4 p-4 bg-emerald-900/40 border border-emerald-500 text-emerald-300 text-sm rounded-lg font-medium">
-          ✅ Thank you! Your order request has been successfully submitted.
+          ✅ Thank you! Your order request has been successfully submitted. We will process it shortly.
         </div>
         <div id="fs-error" class="hidden mb-4 p-4 bg-rose-900/40 border border-rose-500 text-rose-300 text-sm rounded-lg font-medium">
           ⚠️ Something went wrong submitting your order. Please try again.
@@ -202,17 +202,18 @@
     </div>
   </footer>
 
-  <!-- Script & Hybrid Database Engine -->
+  <!-- Script Engine -->
   <script>
     const SUPABASE_URL = 'https://talpzrqtbmducmcygfbc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_6IxcTiIwPQPKqRIkJVT-IA_8J_QFs7n';
     
-    let supabase = null;
-    if (window.supabase) {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Safely declare single Supabase client instance
+    let sbClient = null;
+    if (window.supabase && window.supabase.createClient) {
+      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Default catalog array (Guarantees site never renders blank)
+    // Default Fallback Dataset
     let products = [
       { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'brand/logo.jpg', description: 'Long-chain growth-factor analogue reagent.' },
       { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'brand/logo.jpg', description: 'High-concentration growth-factor analogue.' },
@@ -225,19 +226,19 @@
     let appliedPromoCodeName = "None";
 
     async function fetchLiveInventory() {
-      // Render immediately with local dataset
+      // Render local products immediately
       renderProducts();
 
-      // Attempt live database fetch
-      if (supabase) {
+      // Fetch live updates from database
+      if (sbClient) {
         try {
-          const { data, error } = await supabase.from('inventory').select('*').order('id', { ascending: true });
+          const { data, error } = await sbClient.from('inventory').select('*').order('id', { ascending: true });
           if (!error && data && data.length > 0) {
             products = data;
-            renderProducts(); // Re-render with live DB values
+            renderProducts();
           }
         } catch (err) {
-          console.log('Database sync offline, using local catalog dataset.');
+          console.log('Database sync offline, using catalog dataset.');
         }
       }
     }
@@ -470,7 +471,6 @@
       }
     });
 
-    // Run inventory load on script execute
     fetchLiveInventory();
   </script>
 </body>
