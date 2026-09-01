@@ -88,7 +88,7 @@
         <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">REAGENT CATALOG</h2>
       </div>
       <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Dynamic Product Cards Loaded via JS -->
+        <!-- Loaded via JavaScript -->
       </div>
     </section>
   </main>
@@ -207,18 +207,26 @@
     const SUPABASE_URL = 'https://talpzrqtbmducmcygfbc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_6IxcTiIwPQPKqRIkJVT-IA_8J_QFs7n';
     
-    // Safely declare single Supabase client instance
     let sbClient = null;
     if (window.supabase && window.supabase.createClient) {
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Default Fallback Dataset
+    // Full 13-Item Default Catalog (Exact GitHub File Mapping)
     let products = [
-      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'brand/logo.jpg', description: 'Long-chain growth-factor analogue reagent.' },
-      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'brand/logo.jpg', description: 'High-concentration growth-factor analogue.' },
-      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'brand/logo.jpg', description: 'Pentadecapeptide reference reagent.' },
-      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'brand/logo.jpg', description: 'Mitochondria-targeted tetrapeptide reagent.' }
+      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.' },
+      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.' },
+      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.' },
+      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 0, image: 'products/Blank Vial.png', description: 'Small-molecule compound studied for metabolic efficiency.' },
+      { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 0, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.' },
+      { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 0, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.' },
+      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 0, image: 'products/NAD+ 1000.png', description: 'Essential coenzyme studied for cellular energy balance.' },
+      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.' },
+      { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 0, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.' },
+      { id: '10', name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 0, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.' },
+      { id: '11', name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 0, image: 'products/Selank 10.png', description: 'Neuroprotective peptide reference reagent.' },
+      { id: '12', name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 0, image: 'products/Semax 10.png', description: 'Peptide analogue researched for cognitive analysis.' },
+      { id: '13', name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, stock: 0, image: 'products/Semaglutide 20.png', description: 'GLP-1 receptor agonist reference compound.' }
     ];
 
     let cart = [];
@@ -226,10 +234,7 @@
     let appliedPromoCodeName = "None";
 
     async function fetchLiveInventory() {
-      // Render local products immediately
       renderProducts();
-
-      // Fetch live updates from database
       if (sbClient) {
         try {
           const { data, error } = await sbClient.from('inventory').select('*').order('id', { ascending: true });
@@ -238,7 +243,7 @@
             renderProducts();
           }
         } catch (err) {
-          console.log('Database sync offline, using catalog dataset.');
+          console.log('Database sync offline, using fallback catalog.');
         }
       }
     }
@@ -248,15 +253,15 @@
       if (!grid) return;
 
       grid.innerHTML = products.map(p => {
-        const stockQty = p.stock !== undefined ? p.stock : 10;
+        const stockQty = p.stock !== undefined ? parseInt(p.stock) : 0;
         const isOutOfStock = stockQty <= 0;
-        const displayImg = p.image || 'brand/logo.jpg';
+        const displayImg = p.image || 'products/Blank Vial.png';
 
         return `
           <div class="rounded-2xl border border-cyber-border bg-cyber-card overflow-hidden shadow-lg flex flex-col justify-between hover:border-cyber-pink transition duration-200">
             <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
-              <div class="w-full h-64 bg-cyber-black flex items-center justify-center p-4 border-b border-cyber-border">
-                <img src="${encodeURI(displayImg)}" alt="${p.name}" class="max-h-full max-w-full object-contain hover:scale-105 transition duration-200" onerror="this.src='brand/logo.jpg'"/>
+              <div class="w-full h-64 bg-cyber-black flex items-center justify-center p-4 border-b border-cyber-border relative">
+                <img src="${encodeURI(displayImg)}" alt="${p.name}" class="max-h-full max-w-full object-contain hover:scale-105 transition duration-200 ${isOutOfStock ? 'opacity-40 grayscale' : ''}" onerror="this.src='brand/logo.jpg'"/>
               </div>
               <div class="p-5">
                 <div class="flex justify-between items-center mb-1">
@@ -273,8 +278,8 @@
               <span class="text-lg font-bold text-cyber-cyan glow-text-cyan">$${parseFloat(p.price).toFixed(2)}</span>
               <div class="flex gap-2">
                 <button onclick="openProductModal('${p.id}')" class="border border-cyber-border text-slate-300 text-sm px-3 py-2 rounded-lg hover:border-cyber-cyan transition">Details</button>
-                <button onclick="addToCart('${p.id}')" ${isOutOfStock ? 'disabled' : ''} class="${isOutOfStock ? 'bg-slate-800 text-slate-600 cursor-not-allowed' : 'bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white hover:shadow-neon-pink'} text-sm px-4 py-2 rounded-lg transition font-bold">
-                  ${isOutOfStock ? 'Out of Stock' : '+ Add'}
+                <button onclick="addToCart('${p.id}')" ${isOutOfStock ? 'disabled' : ''} class="${isOutOfStock ? 'bg-slate-800 text-slate-600 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white hover:shadow-neon-pink'} text-sm px-4 py-2 rounded-lg transition font-bold">
+                  ${isOutOfStock ? 'Sold Out' : '+ Add'}
                 </button>
               </div>
             </div>
@@ -284,7 +289,7 @@
     }
 
     function openProductModal(id) {
-      const product = products.find(p => p.id === id);
+      const product = products.find(p => p.id === String(id));
       if (!product) return;
       document.getElementById('modal-title').innerText = product.name;
       document.getElementById('modal-category').innerText = product.category;
@@ -301,12 +306,17 @@
     function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
 
     function addToCart(id) {
-      const item = products.find(p => p.id === id);
+      const item = products.find(p => p.id === String(id));
       if (!item) return;
 
-      const cartItem = cart.find(c => c.id === id);
+      const cartItem = cart.find(c => c.id === String(id));
       const currentCartQty = cartItem ? cartItem.qty : 0;
-      const availableStock = item.stock !== undefined ? item.stock : 99;
+      const availableStock = item.stock !== undefined ? parseInt(item.stock) : 0;
+
+      if (availableStock <= 0) {
+        alert('This item is currently out of stock.');
+        return;
+      }
 
       if (currentCartQty >= availableStock) {
         alert(`Stock limit reached. Only ${availableStock} vial(s) available.`);
@@ -319,10 +329,10 @@
     }
 
     function updateQty(id, change) {
-      const item = cart.find(c => c.id === id);
+      const item = cart.find(c => c.id === String(id));
       if (!item) return;
       item.qty += change;
-      if (item.qty <= 0) { cart = cart.filter(c => c.id !== id); }
+      if (item.qty <= 0) { cart = cart.filter(c => c.id !== String(id)); }
       updateCartUI();
     }
 
