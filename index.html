@@ -103,7 +103,7 @@
         </div>
         
         <div id="fs-success" class="hidden mb-4 p-4 bg-emerald-900/40 border border-emerald-500 text-emerald-300 text-sm rounded-lg font-medium">
-          ✅ Thank you! Your order request has been successfully submitted. We will process it shortly.
+          ✅ Thank you! Your order request has been successfully submitted and stock updated.
         </div>
         <div id="fs-error" class="hidden mb-4 p-4 bg-rose-900/40 border border-rose-500 text-rose-300 text-sm rounded-lg font-medium">
           ⚠️ Something went wrong submitting your order. Please try again.
@@ -212,7 +212,7 @@
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Full 13-Item Default Catalog (Exact GitHub File Mapping)
+    // Default Fallback Dataset
     let products = [
       { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.' },
       { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.' },
@@ -441,6 +441,7 @@
 
     function toggleCart() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
 
+    // Automatic Inventory Deduction & Order Handler
     document.getElementById('order-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       if (cart.length === 0) {
@@ -455,9 +456,27 @@
       const errorBox = document.getElementById('fs-error');
 
       submitBtn.disabled = true;
-      submitBtn.innerText = "Submitting Request...";
+      submitBtn.innerText = "Processing & Updating Stock...";
 
       try {
+        // 1. Deduct Stock in Supabase
+        if (sbClient) {
+          for (const item of cart) {
+            const currentItem = products.find(p => p.id === String(item.id));
+            if (currentItem) {
+              const currentStock = parseInt(currentItem.stock || 0);
+              const newStock = Math.max(0, currentStock - item.qty);
+              
+              // Update database row
+              await sbClient.from('inventory').update({ stock: newStock }).eq('id', item.id);
+              
+              // Update local state
+              currentItem.stock = newStock;
+            }
+          }
+        }
+
+        // 2. Send Order Request to Formspree
         const response = await fetch(form.action, {
           method: 'POST',
           body: data,
@@ -470,10 +489,12 @@
           cart = [];
           form.reset();
           updateCartUI();
+          renderProducts(); // Refresh catalog display to reflect new stock
         } else {
           errorBox.classList.remove('hidden');
         }
       } catch (err) {
+        console.error('Submission error:', err);
         errorBox.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
