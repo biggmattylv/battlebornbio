@@ -88,7 +88,7 @@
         <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">REAGENT CATALOG</h2>
       </div>
       <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Loaded via JS -->
+        <!-- Loaded via JavaScript -->
       </div>
     </section>
   </main>
@@ -202,18 +202,22 @@
     </div>
   </footer>
 
-  <!-- Script & Supabase Sync Engine -->
+  <!-- Script & Hybrid Database Engine -->
   <script>
     const SUPABASE_URL = 'https://talpzrqtbmducmcygfbc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_6IxcTiIwPQPKqRIkJVT-IA_8J_QFs7n';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    let supabase = null;
+    if (window.supabase) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
 
-    // Initial Fallback Inventory (guarantees cards render immediately)
+    // Default catalog array (Guarantees site never renders blank)
     let products = [
-      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/r3-10mg.png', description: 'Long-chain growth-factor analogue reagent.' },
-      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/r3-20mg.png', description: 'High-concentration growth-factor analogue.' },
-      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/bpc-157-10mg.png', description: 'Pentadecapeptide reference reagent.' },
-      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/ss-31-10mg.png', description: 'Mitochondria-targeted tetrapeptide reagent.' }
+      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'brand/logo.jpg', description: 'Long-chain growth-factor analogue reagent.' },
+      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'brand/logo.jpg', description: 'High-concentration growth-factor analogue.' },
+      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'brand/logo.jpg', description: 'Pentadecapeptide reference reagent.' },
+      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'brand/logo.jpg', description: 'Mitochondria-targeted tetrapeptide reagent.' }
     ];
 
     let cart = [];
@@ -221,15 +225,21 @@
     let appliedPromoCodeName = "None";
 
     async function fetchLiveInventory() {
-      try {
-        const { data, error } = await supabase.from('inventory').select('*').order('id', { ascending: true });
-        if (!error && data && data.length > 0) {
-          products = data;
-        }
-      } catch (err) {
-        console.log('Using catalog fallback dataset.');
-      }
+      // Render immediately with local dataset
       renderProducts();
+
+      // Attempt live database fetch
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.from('inventory').select('*').order('id', { ascending: true });
+          if (!error && data && data.length > 0) {
+            products = data;
+            renderProducts(); // Re-render with live DB values
+          }
+        } catch (err) {
+          console.log('Database sync offline, using local catalog dataset.');
+        }
+      }
     }
 
     function renderProducts() {
@@ -239,13 +249,13 @@
       grid.innerHTML = products.map(p => {
         const stockQty = p.stock !== undefined ? p.stock : 10;
         const isOutOfStock = stockQty <= 0;
-        const displayImage = p.image || 'brand/logo.jpg';
+        const displayImg = p.image || 'brand/logo.jpg';
 
         return `
           <div class="rounded-2xl border border-cyber-border bg-cyber-card overflow-hidden shadow-lg flex flex-col justify-between hover:border-cyber-pink transition duration-200">
             <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
               <div class="w-full h-64 bg-cyber-black flex items-center justify-center p-4 border-b border-cyber-border">
-                <img src="${encodeURI(displayImage)}" alt="${p.name}" class="max-h-full max-w-full object-contain hover:scale-105 transition duration-200" onerror="this.src='brand/logo.jpg'"/>
+                <img src="${encodeURI(displayImg)}" alt="${p.name}" class="max-h-full max-w-full object-contain hover:scale-105 transition duration-200" onerror="this.src='brand/logo.jpg'"/>
               </div>
               <div class="p-5">
                 <div class="flex justify-between items-center mb-1">
@@ -460,6 +470,7 @@
       }
     });
 
+    // Run inventory load on script execute
     fetchLiveInventory();
   </script>
 </body>
