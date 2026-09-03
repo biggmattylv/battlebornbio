@@ -95,15 +95,17 @@
 
   <!-- Slide-out Drawer Cart -->
   <div id="cart-drawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex justify-end">
-    <div class="bg-cyber-card border-l border-cyber-magenta/50 w-full max-w-md h-full p-6 flex flex-col justify-between overflow-y-auto">
+    <div class="bg-cyber-card border-l border-cyber-magenta/50 w-full max-w-lg h-full p-6 flex flex-col justify-between overflow-y-auto">
       <div>
         <div class="flex justify-between items-center border-b border-cyber-border pb-4 mb-4">
-          <h3 class="text-xl font-bold text-white tracking-wider glow-text-cyan">Research Reagent Order</h3>
+          <h3 class="text-xl font-bold text-white tracking-wider glow-text-cyan">Research Reagent Checkout</h3>
           <button onclick="toggleCart()" class="text-slate-400 hover:text-cyber-pink text-xl font-bold">✕</button>
         </div>
         
         <div id="fs-success" class="hidden mb-4 p-4 bg-emerald-900/40 border border-emerald-500 text-emerald-300 text-sm rounded-lg font-medium">
-          ✅ Thank you! Your order request has been successfully submitted and stock updated.
+          <div class="font-bold text-base mb-1">✅ Order Request Submitted!</div>
+          <p class="text-xs leading-relaxed mb-3">Your order and inventory reservation have been logged.</p>
+          <div id="payment-instructions-box" class="bg-cyber-black p-3 rounded border border-emerald-500/50 text-xs text-white space-y-1"></div>
         </div>
         <div id="fs-error" class="hidden mb-4 p-4 bg-rose-900/40 border border-rose-500 text-rose-300 text-sm rounded-lg font-medium">
           ⚠️ Something went wrong submitting your order. Please try again.
@@ -115,6 +117,12 @@
       </div>
 
       <div class="border-t border-cyber-border pt-4 mt-6">
+        <!-- Upsell Shipping Incentive Banner -->
+        <div id="shipping-upsell-banner" class="hidden mb-4 p-3 bg-gradient-to-r from-cyber-pink/20 to-cyber-magenta/20 border border-cyber-pink rounded-lg text-xs font-bold text-white text-center shadow-neon-pink">
+          🚀 Add <span class="text-cyber-cyan glow-text-cyan font-black">1 more vial</span> to get <strong class="text-cyber-yellow">FREE Standard Shipping</strong> (USPS / FedEx / UPS)!
+        </div>
+
+        <!-- Promo Code -->
         <div class="mb-4">
           <label class="block text-xs font-bold text-cyber-cyan mb-1 tracking-widest">PROMO CODE</label>
           <div class="flex gap-2">
@@ -124,31 +132,82 @@
           <p id="promo-msg" class="text-xs mt-1 font-semibold"></p>
         </div>
 
-        <div class="space-y-1 mb-4 border-t border-cyber-border pt-2">
-          <div class="flex justify-between text-sm text-slate-400">
+        <!-- Totals Breakdown -->
+        <div class="space-y-1 mb-4 border-t border-cyber-border pt-2 text-sm">
+          <div class="flex justify-between text-slate-400">
             <span>Subtotal:</span>
             <span id="cart-subtotal">$0.00</span>
           </div>
-          <div id="discount-row" class="flex justify-between text-sm text-cyber-pink font-semibold hidden">
+          <div id="discount-row" class="flex justify-between text-cyber-pink font-semibold hidden">
             <span>Discount:</span>
             <span id="cart-discount">-$0.00</span>
           </div>
-          <div class="flex justify-between text-lg font-bold text-white pt-1">
+          <div class="flex justify-between text-slate-400">
+            <span>Fulfillment / Shipping:</span>
+            <span id="cart-shipping">$0.00</span>
+          </div>
+          <div class="flex justify-between text-lg font-bold text-white pt-1 border-t border-cyber-border/50">
             <span>Estimated Total:</span>
             <span id="cart-total" class="text-cyber-cyan glow-text-cyan">$0.00</span>
           </div>
         </div>
 
+        <!-- Checkout Form -->
         <form id="order-form" action="https://formspree.io/f/xgaevlnl" method="POST">
           <input type="hidden" name="Order_Details" id="order-details-input"/>
           <input type="hidden" name="Total_Amount" id="order-total-input"/>
           <input type="hidden" name="Applied_Promo_Code" id="order-promo-input" value="None"/>
+          <input type="hidden" name="Fulfillment_Method" id="order-fulfillment-input" value="Standard Shipping"/>
+          <input type="hidden" name="Payment_Method" id="order-payment-input" value="Zelle"/>
 
+          <!-- Step 1: Fulfillment Choice -->
+          <div class="mb-4">
+            <label class="block text-xs font-bold text-cyber-pink mb-2 tracking-widest">1. FULFILLMENT METHOD</label>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <label class="border border-cyber-border bg-cyber-black p-2.5 rounded cursor-pointer flex items-center gap-2 hover:border-cyber-cyan">
+                <input type="radio" name="fulfillment_option" value="shipping" checked onclick="setFulfillment('shipping')" class="accent-cyber-cyan"/>
+                <div>
+                  <div class="font-bold text-white">📦 Standard Shipping</div>
+                  <div class="text-[10px] text-slate-400">USPS / FedEx / UPS</div>
+                </div>
+              </label>
+              <label class="border border-cyber-border bg-cyber-black p-2.5 rounded cursor-pointer flex items-center gap-2 hover:border-cyber-cyan">
+                <input type="radio" name="fulfillment_option" value="local" onclick="setFulfillment('local')" class="accent-cyber-cyan"/>
+                <div>
+                  <div class="font-bold text-white">📍 Local Vegas Drop</div>
+                  <div class="text-[10px] text-cyber-cyan font-bold">Free Local Delivery</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Step 2: Payment Choice -->
+          <div class="mb-4">
+            <label class="block text-xs font-bold text-cyber-pink mb-2 tracking-widest">2. ANONYMOUS PAYMENT METHOD</label>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <label class="border border-cyber-border bg-cyber-black p-2.5 rounded cursor-pointer flex items-center gap-2 hover:border-cyber-cyan">
+                <input type="radio" name="payment_option" value="zelle" checked onclick="setPaymentMethod('zelle')" class="accent-cyber-cyan"/>
+                <div>
+                  <div class="font-bold text-white">⚡ Zelle Transfer</div>
+                  <div class="text-[10px] text-slate-400">Direct handle transfer</div>
+                </div>
+              </label>
+              <label class="border border-cyber-border bg-cyber-black p-2.5 rounded cursor-pointer flex items-center gap-2 hover:border-cyber-cyan">
+                <input type="radio" name="payment_option" value="crypto" onclick="setPaymentMethod('crypto')" class="accent-cyber-cyan"/>
+                <div>
+                  <div class="font-bold text-white">🪙 Crypto (USDT/BTC)</div>
+                  <div class="text-[10px] text-slate-400">On-chain deposit</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Step 3: Researcher Info Inputs -->
           <div class="space-y-3 mb-4">
-            <input type="text" name="Institution_Name" placeholder="Institution / Company Name" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
+            <input type="text" name="Institution_Name" placeholder="Institution / Lab / Alias Name" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
             <input type="email" name="Researcher_Email" placeholder="Researcher Email Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
-            <input type="text" name="Shipping_Address" placeholder="Shipping Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
-            <textarea name="Order_Notes" placeholder="Additional Research Notes (Optional)" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white h-20 focus:border-cyber-cyan focus:outline-none"></textarea>
+            <input type="text" id="address-input" name="Shipping_Address" placeholder="Mailing / Shipping Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
+            <textarea name="Order_Notes" id="notes-input" placeholder="Additional Research Notes or Local Meetup Instructions (Optional)" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white h-16 focus:border-cyber-cyan focus:outline-none"></textarea>
           </div>
 
           <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-cyber-pink via-cyber-magenta to-cyber-cyan text-black font-black py-3 rounded-lg hover:shadow-neon-pink transition disabled:opacity-50 uppercase tracking-widest">
@@ -232,6 +291,9 @@
     let cart = [];
     let appliedDiscountRate = 0;
     let appliedPromoCodeName = "None";
+    let isLocalFulfillment = false;
+    let currentFulfillmentType = "Standard Shipping";
+    let currentPaymentMethod = "Zelle";
 
     async function fetchLiveInventory() {
       renderProducts();
@@ -336,6 +398,31 @@
       updateCartUI();
     }
 
+    function setFulfillment(type) {
+      if (type === 'local') {
+        isLocalFulfillment = true;
+        currentFulfillmentType = "Local Vegas Drop";
+        document.getElementById('address-input').placeholder = "Local Delivery Area / Hotel / Landmark";
+        document.getElementById('notes-input').placeholder = "Provide preferred local drop window or contact details";
+      } else {
+        isLocalFulfillment = false;
+        currentFulfillmentType = "Standard Shipping";
+        document.getElementById('address-input').placeholder = "Mailing / Shipping Address";
+        document.getElementById('notes-input').placeholder = "Additional Research Notes (Optional)";
+      }
+      document.getElementById('order-fulfillment-input').value = currentFulfillmentType;
+      updateCartUI();
+    }
+
+    function setPaymentMethod(method) {
+      if (method === 'crypto') {
+        currentPaymentMethod = "Crypto (USDT/BTC)";
+      } else {
+        currentPaymentMethod = "Zelle";
+      }
+      document.getElementById('order-payment-input').value = currentPaymentMethod;
+    }
+
     function applyPromoCode() {
       const codeInput = document.getElementById('promo-input').value.trim().toUpperCase();
       const msg = document.getElementById('promo-msg');
@@ -391,13 +478,17 @@
       const subtotalContainer = document.getElementById('cart-subtotal');
       const discountRow = document.getElementById('discount-row');
       const discountContainer = document.getElementById('cart-discount');
+      const shippingContainer = document.getElementById('cart-shipping');
       const totalContainer = document.getElementById('cart-total');
+      const upsellBanner = document.getElementById('shipping-upsell-banner');
 
       if (cart.length === 0) {
         cartContainer.innerHTML = '<p class="text-slate-500 text-sm">Your order list is empty.</p>';
         subtotalContainer.innerText = '$0.00';
+        shippingContainer.innerText = '$0.00';
         totalContainer.innerText = '$0.00';
         discountRow.classList.add('hidden');
+        upsellBanner.classList.add('hidden');
         return;
       }
 
@@ -426,10 +517,29 @@
         `;
       }).join('');
 
+      // Shipping & Upsell Logic
+      let currentShippingFee = 0;
+      if (isLocalFulfillment) {
+        currentShippingFee = 0.00;
+        upsellBanner.classList.add('hidden');
+        shippingContainer.innerText = "FREE (Local Drop)";
+      } else {
+        if (totalItemCount === 1) {
+          currentShippingFee = 5.00; // Flat fee for 1 vial
+          upsellBanner.classList.remove('hidden');
+          shippingContainer.innerText = "$5.00 Flat Rate";
+        } else {
+          currentShippingFee = 0.00; // FREE for 2+ vials
+          upsellBanner.classList.add('hidden');
+          shippingContainer.innerText = "FREE (2+ Vials)";
+        }
+      }
+
       const discountAmount = subtotal * appliedDiscountRate;
-      const finalTotal = subtotal - discountAmount;
+      const finalTotal = (subtotal - discountAmount) + currentShippingFee;
 
       subtotalContainer.innerText = `$${subtotal.toFixed(2)}`;
+
       if (appliedDiscountRate > 0) {
         discountRow.classList.remove('hidden');
         discountContainer.innerText = `-$${discountAmount.toFixed(2)}`;
@@ -439,14 +549,14 @@
 
       totalContainer.innerText = `$${finalTotal.toFixed(2)}`;
 
-      document.getElementById('order-details-input').value = orderSummaryText.join(' | ');
+      document.getElementById('order-details-input').value = `${orderSummaryText.join(' | ')} [Method: ${currentFulfillmentType} | Payment: ${currentPaymentMethod}]`;
       document.getElementById('order-total-input').value = `$${finalTotal.toFixed(2)}`;
       document.getElementById('order-promo-input').value = appliedPromoCodeName;
     }
 
     function toggleCart() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
 
-    // Automatic Inventory Deduction & Order Handler
+    // Automatic Inventory Deduction, Supabase Logging & Order Handler
     document.getElementById('order-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       if (cart.length === 0) {
@@ -459,11 +569,19 @@
       const submitBtn = document.getElementById('submit-btn');
       const successBox = document.getElementById('fs-success');
       const errorBox = document.getElementById('fs-error');
+      const paymentBox = document.getElementById('payment-instructions-box');
 
       submitBtn.disabled = true;
       submitBtn.innerText = "Processing & Updating Stock...";
 
+      const emailVal = data.get('Researcher_Email');
+      const instVal = data.get('Institution_Name');
+      const addrVal = data.get('Shipping_Address');
+      const orderDetailsVal = document.getElementById('order-details-input').value;
+      const totalVal = document.getElementById('order-total-input').value;
+
       try {
+        // 1. Deduct Stock in Supabase
         if (sbClient) {
           for (const item of cart) {
             const currentItem = products.find(p => p.id === String(item.id));
@@ -475,8 +593,20 @@
               currentItem.stock = newStock;
             }
           }
+
+          // 2. Log Order to Supabase `orders` table for admin dashboard
+          await sbClient.from('orders').insert([{
+            researcher_email: emailVal,
+            institution_name: instVal,
+            shipping_address: addrVal,
+            order_details: orderDetailsVal,
+            total_amount: totalVal,
+            promo_code: appliedPromoCodeName,
+            status: 'Pending'
+          }]);
         }
 
+        // 3. Send Notification to Formspree
         const response = await fetch(form.action, {
           method: 'POST',
           body: data,
@@ -484,6 +614,22 @@
         });
 
         if (response.ok) {
+          if (currentPaymentMethod === "Crypto (USDT/BTC)") {
+            paymentBox.innerHTML = `
+              <div class="font-bold text-cyber-cyan mb-1">🪙 Crypto Payment Instructions:</div>
+              <div>Please send <strong>${totalVal}</strong> in USDT (TRC-20) or BTC to:</div>
+              <div class="font-mono bg-cyber-card p-1.5 rounded text-[11px] text-cyber-pink select-all my-1">0x892a7B...B382F (USDT)</div>
+              <div>Include your Email in the transaction note. Order will dispatch upon 1 confirmation.</div>
+            `;
+          } else {
+            paymentBox.innerHTML = `
+              <div class="font-bold text-cyber-cyan mb-1">⚡ Zelle Payment Instructions:</div>
+              <div>Please transfer <strong>${totalVal}</strong> via Zelle to:</div>
+              <div class="font-mono bg-cyber-card p-1.5 rounded text-[11px] text-cyber-pink select-all my-1">pay@battlebornbio.com</div>
+              <div>Include your Institution/Alias Name in the note. Order will dispatch upon receipt.</div>
+            `;
+          }
+
           successBox.classList.remove('hidden');
           errorBox.classList.add('hidden');
           cart = [];
