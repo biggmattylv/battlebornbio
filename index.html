@@ -45,7 +45,7 @@
   <!-- Header -->
   <header class="border-b border-cyber-border bg-cyber-card/90 backdrop-blur sticky top-0 z-20">
     <div class="bg-gradient-to-r from-cyber-pink via-cyber-magenta to-cyber-cyan text-black text-xs sm:text-sm text-center py-1.5 px-4 font-black tracking-widest uppercase">
-      ⚡ Battle Born BIO — Lot Verified Cyberpunk Research Hub ⚡
+      ⚠️ RESEARCH USE ONLY — NOT FOR HUMAN CONSUMPTION ⚠️
     </div>
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3">
       <a class="flex items-center gap-3" href="/">
@@ -217,7 +217,7 @@
       { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.' },
       { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.' },
       { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.' },
-      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 0, image: 'products/Blank Vial.png', description: 'Small-molecule compound studied for metabolic efficiency.' },
+      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 0, image: 'brand/logo.jpg', description: 'Small-molecule compound studied for metabolic efficiency.' },
       { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 0, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.' },
       { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 0, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.' },
       { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 0, image: 'products/NAD+ 1000.png', description: 'Essential coenzyme studied for cellular energy balance.' },
@@ -255,7 +255,7 @@
       grid.innerHTML = products.map(p => {
         const stockQty = p.stock !== undefined ? parseInt(p.stock) : 0;
         const isOutOfStock = stockQty <= 0;
-        const displayImg = p.image || 'products/Blank Vial.png';
+        const displayImg = p.image || 'brand/logo.jpg';
 
         return `
           <div class="rounded-2xl border border-cyber-border bg-cyber-card overflow-hidden shadow-lg flex flex-col justify-between hover:border-cyber-pink transition duration-200">
@@ -341,12 +341,17 @@
       const msg = document.getElementById('promo-msg');
       const totalItemCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
-      if (codeInput === "BIGG") {
+      if (codeInput === "SEAMLESS") {
+        appliedDiscountRate = 0.30;
+        appliedPromoCodeName = "SEAMLESS (30% Off Everything)";
+        msg.className = "text-xs mt-1 font-semibold text-emerald-400";
+        msg.innerText = "30% Private VIP Discount Applied!";
+      } else if (codeInput === "BIGG") {
         if (totalItemCount >= 2) {
-          appliedDiscountRate = 0.20;
-          appliedPromoCodeName = "BIGG (20% Off 2+ Items)";
+          appliedDiscountRate = 0.15;
+          appliedPromoCodeName = "BIGG (15% Off 2+ Items)";
           msg.className = "text-xs mt-1 font-semibold text-emerald-400";
-          msg.innerText = "20% Discount Applied!";
+          msg.innerText = "15% Discount Applied!";
         } else {
           appliedDiscountRate = 0;
           appliedPromoCodeName = "None";
@@ -459,7 +464,6 @@
       submitBtn.innerText = "Processing & Updating Stock...";
 
       try {
-        // 1. Deduct Stock in Supabase
         if (sbClient) {
           for (const item of cart) {
             const currentItem = products.find(p => p.id === String(item.id));
@@ -467,16 +471,12 @@
               const currentStock = parseInt(currentItem.stock || 0);
               const newStock = Math.max(0, currentStock - item.qty);
               
-              // Update database row
               await sbClient.from('inventory').update({ stock: newStock }).eq('id', item.id);
-              
-              // Update local state
               currentItem.stock = newStock;
             }
           }
         }
 
-        // 2. Send Order Request to Formspree
         const response = await fetch(form.action, {
           method: 'POST',
           body: data,
@@ -489,7 +489,7 @@
           cart = [];
           form.reset();
           updateCartUI();
-          renderProducts(); // Refresh catalog display to reflect new stock
+          renderProducts();
         } else {
           errorBox.classList.remove('hidden');
         }
