@@ -45,7 +45,7 @@
         <img src="brand/logo.jpg" alt="Logo" class="h-9 w-auto rounded border border-cyber-cyan shadow-neon-cyan" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
         <div>
           <span class="block font-black text-white text-base tracking-wider glow-text-cyan">BATTLE BORN</span>
-          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v2.2</span>
+          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v2.4</span>
         </div>
       </div>
 
@@ -73,7 +73,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-cyber-border pb-4">
         <div>
           <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY MODULE</h2>
-          <p class="text-xs text-slate-400">Manage vendor sources, pricing, stock levels, and product variants.</p>
+          <p class="text-xs text-slate-400">Manage vendor sources (Tina, Tong, Mavel), pricing, images, stock levels, and product variants.</p>
         </div>
         <div class="flex gap-3">
           <button onclick="openAddModal()" class="bg-cyber-cyan text-black text-sm font-black px-4 py-2.5 rounded-lg hover:shadow-neon-cyan transition uppercase tracking-wider">
@@ -117,18 +117,19 @@
             <tr class="border-b border-cyber-border text-xs uppercase tracking-widest text-slate-400 bg-cyber-black/50">
               <th class="p-3">ID</th>
               <th class="p-3">Product Name</th>
-              <th class="p-3">Vendor / Supplier</th>
+              <th class="p-3">Vendor</th>
+              <th class="p-3">Image Path</th>
               <th class="p-3">Kit Cost ($)</th>
-              <th class="p-3">COGS / Vial</th>
-              <th class="p-3">30% Target (/0.7)</th>
+              <th class="p-3">COGS</th>
+              <th class="p-3">30% Target</th>
               <th class="p-3">Live Price ($)</th>
-              <th class="p-3">Stock (Vials)</th>
+              <th class="p-3">Stock</th>
               <th class="p-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody id="inventory-rows" class="divide-y divide-cyber-border text-sm">
             <tr>
-              <td colspan="9" class="p-4 text-center text-slate-500">Loading inventory...</td>
+              <td colspan="10" class="p-4 text-center text-slate-500">Loading inventory...</td>
             </tr>
           </tbody>
         </table>
@@ -181,18 +182,24 @@
             <input type="text" id="new-id" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white font-mono focus:border-cyber-cyan focus:outline-none"/>
           </div>
           <div>
-            <label class="block text-slate-400 mb-1 font-bold">Vendor Name</label>
-            <input type="text" id="new-vendor" placeholder="e.g. Vendor Alpha" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none"/>
+            <label class="block text-slate-400 mb-1 font-bold">Vendor / Supplier</label>
+            <select id="new-vendor-select" onchange="toggleCustomVendorInput('new')" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none">
+              <option value="Tina">Tina</option>
+              <option value="Tong">Tong</option>
+              <option value="Mavel">Mavel</option>
+              <option value="Other">Other...</option>
+            </select>
+            <input type="text" id="new-vendor-custom" placeholder="Type Vendor Name" class="hidden w-full mt-2 bg-cyber-black border border-cyber-border p-2 rounded text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none"/>
           </div>
         </div>
         <div>
-          <label class="block text-slate-400 mb-1 font-bold">Product Name (e.g. R3 (40mg))</label>
+          <label class="block text-slate-400 mb-1 font-bold">Product Name (e.g. NAD+ (500mg))</label>
           <input type="text" id="new-name" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white font-bold focus:border-cyber-cyan focus:outline-none"/>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-slate-400 mb-1 font-bold">Category</label>
-            <input type="text" id="new-category" required placeholder="Peptide Reagents" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white focus:border-cyber-cyan focus:outline-none"/>
+            <input type="text" id="new-category" required placeholder="Coenzymes" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white focus:border-cyber-cyan focus:outline-none"/>
           </div>
           <div>
             <label class="block text-slate-400 mb-1 font-bold">Kit Cost ($)</label>
@@ -202,7 +209,7 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-slate-400 mb-1 font-bold">Retail Price ($)</label>
-            <input type="number" step="0.01" id="new-price" required placeholder="70.00" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-cyber-cyan font-bold focus:border-cyber-cyan focus:outline-none"/>
+            <input type="number" step="0.01" id="new-price" required placeholder="75.00" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-cyber-cyan font-bold focus:border-cyber-cyan focus:outline-none"/>
           </div>
           <div>
             <label class="block text-slate-400 mb-1 font-bold">Initial Stock (Vials)</label>
@@ -210,8 +217,9 @@
           </div>
         </div>
         <div>
-          <label class="block text-slate-400 mb-1 font-bold">Image Path</label>
-          <input type="text" id="new-image" value="products/Blank Vial.png" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-slate-300 font-mono focus:border-cyber-cyan focus:outline-none"/>
+          <label class="block text-slate-400 mb-1 font-bold">Image Path in GitHub Products Folder</label>
+          <input type="text" id="new-image" placeholder="products/NAD+ 500.png" value="products/Blank Vial.png" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-slate-300 font-mono focus:border-cyber-cyan focus:outline-none"/>
+          <span class="text-[10px] text-slate-500">Example: products/NAD+ 500.png</span>
         </div>
         <div>
           <label class="block text-slate-400 mb-1 font-bold">Description</label>
@@ -236,6 +244,7 @@
 
     let localInventory = [];
     let localOrders = [];
+    const knownVendors = ["Tina", "Tong", "Mavel"];
 
     function switchTab(tab) {
       document.getElementById('module-inventory').classList.add('hidden');
@@ -303,7 +312,8 @@
         const isOut = stockNum <= 0;
         const kitCostVal = item.kit_cost || 180;
         const metrics = calculateVialMetrics(kitCostVal);
-        const vendorVal = item.vendor || 'Direct';
+        const currentVendor = item.vendor || 'Tina';
+        const isKnownVendor = knownVendors.includes(currentVendor);
 
         return `
           <tr class="hover:bg-cyber-black/30 transition">
@@ -313,19 +323,33 @@
               <div class="text-[10px] text-cyber-pink font-semibold">${item.category || 'General'}</div>
             </td>
             <td class="p-3">
-              <input type="text" value="${vendorVal}" 
-                onchange="updateLocalValue(${index}, 'vendor', this.value)"
-                class="w-28 bg-cyber-black border border-cyber-border rounded p-1.5 text-xs text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none"/>
+              <div class="flex flex-col gap-1">
+                <select onchange="handleRowVendorChange(${index}, this.value)" class="w-24 bg-cyber-black border border-cyber-border rounded p-1 text-xs text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none">
+                  <option value="Tina" ${currentVendor === 'Tina' ? 'selected' : ''}>Tina</option>
+                  <option value="Tong" ${currentVendor === 'Tong' ? 'selected' : ''}>Tong</option>
+                  <option value="Mavel" ${currentVendor === 'Mavel' ? 'selected' : ''}>Mavel</option>
+                  <option value="Other" ${!isKnownVendor ? 'selected' : ''}>Other...</option>
+                </select>
+                <input type="text" id="custom-vendor-row-${index}" value="${!isKnownVendor ? currentVendor : ''}" 
+                  onchange="updateLocalValue(${index}, 'vendor', this.value)"
+                  placeholder="Custom Vendor"
+                  class="${!isKnownVendor ? '' : 'hidden'} w-24 bg-cyber-black border border-cyber-border rounded p-1 text-[11px] text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none"/>
+              </div>
+            </td>
+            <td class="p-3">
+              <input type="text" value="${item.image || ''}" 
+                onchange="updateLocalValue(${index}, 'image', this.value)"
+                class="w-32 bg-cyber-black border border-cyber-border rounded p-1.5 text-[11px] font-mono text-slate-300 focus:border-cyber-cyan focus:outline-none"/>
             </td>
             <td class="p-3">
               <input type="number" value="${kitCostVal}" 
                 onchange="updateKitCost(${index}, this.value)"
                 class="w-20 bg-cyber-black border border-cyber-border rounded p-1.5 text-xs font-bold text-slate-200 focus:border-cyber-cyan focus:outline-none"/>
             </td>
-            <td class="p-3 font-mono font-bold text-cyber-pink" id="cogs-cell-${index}">
+            <td class="p-3 font-mono font-bold text-cyber-pink text-xs" id="cogs-cell-${index}">
               $${metrics.cogs}
             </td>
-            <td class="p-3 font-mono font-bold text-cyber-yellow" id="target-cell-${index}">
+            <td class="p-3 font-mono font-bold text-cyber-yellow text-xs" id="target-cell-${index}">
               $${metrics.target}
             </td>
             <td class="p-3">
@@ -334,17 +358,14 @@
                 class="w-20 bg-cyber-black border border-cyber-border rounded p-1.5 text-xs text-cyber-cyan font-bold focus:border-cyber-cyan focus:outline-none"/>
             </td>
             <td class="p-3">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5">
                 <input type="number" value="${stockNum}" 
                   onchange="updateLocalValue(${index}, 'stock', this.value)"
                   class="w-16 bg-cyber-black border border-cyber-border rounded p-1.5 text-xs font-bold ${isOut ? 'text-rose-400' : 'text-white'} focus:border-cyber-pink focus:outline-none"/>
-                <span class="text-[11px] ${isOut ? 'text-rose-400 font-bold' : 'text-slate-500'}">
-                  ${isOut ? 'OUT' : 'Vials'}
-                </span>
               </div>
             </td>
             <td class="p-3 text-right">
-              <button onclick="duplicateProduct('${item.id}')" class="bg-cyber-black border border-cyber-cyan/50 text-cyber-cyan text-xs font-bold px-2.5 py-1.5 rounded hover:bg-cyber-cyan/20 transition">
+              <button onclick="duplicateProduct('${item.id}')" class="bg-cyber-black border border-cyber-cyan/50 text-cyber-cyan text-xs font-bold px-2 py-1 rounded hover:bg-cyber-cyan/20 transition">
                 📋 Duplicate
               </button>
             </td>
@@ -353,15 +374,46 @@
       }).join('');
     }
 
+    function handleRowVendorChange(index, value) {
+      const customInput = document.getElementById(`custom-vendor-row-${index}`);
+      if (value === 'Other') {
+        customInput.classList.remove('hidden');
+        localInventory[index].vendor = customInput.value || 'Custom';
+      } else {
+        customInput.classList.add('hidden');
+        localInventory[index].vendor = value;
+      }
+    }
+
+    function toggleCustomVendorInput() {
+      const sel = document.getElementById('new-vendor-select').value;
+      const customInput = document.getElementById('new-vendor-custom');
+      if (sel === 'Other') {
+        customInput.classList.remove('hidden');
+      } else {
+        customInput.classList.add('hidden');
+      }
+    }
+
     function duplicateProduct(id) {
       const source = localInventory.find(p => p.id === String(id));
       if (!source) return;
 
       const nextId = String(localInventory.length + 1);
+      const sourceVendor = source.vendor || 'Tina';
       
       document.getElementById('modal-heading').innerText = `📋 Duplicate Variant from ${source.name}`;
       document.getElementById('new-id').value = nextId;
-      document.getElementById('new-vendor').value = source.vendor || 'Direct';
+      
+      if (knownVendors.includes(sourceVendor)) {
+        document.getElementById('new-vendor-select').value = sourceVendor;
+        document.getElementById('new-vendor-custom').classList.add('hidden');
+      } else {
+        document.getElementById('new-vendor-select').value = 'Other';
+        document.getElementById('new-vendor-custom').value = sourceVendor;
+        document.getElementById('new-vendor-custom').classList.remove('hidden');
+      }
+
       document.getElementById('new-name').value = `${source.name.split('(')[0].trim()} (40mg)`;
       document.getElementById('new-category').value = source.category || '';
       document.getElementById('new-kit-cost').value = source.kit_cost || 180;
@@ -378,7 +430,8 @@
       document.getElementById('modal-heading').innerText = "➕ Add New Product";
       document.getElementById('add-product-form').reset();
       document.getElementById('new-id').value = nextId;
-      document.getElementById('new-vendor').value = "Direct";
+      document.getElementById('new-vendor-select').value = "Tina";
+      document.getElementById('new-vendor-custom').classList.add('hidden');
       document.getElementById('new-kit-cost').value = 180;
       document.getElementById('new-stock').value = 10;
       document.getElementById('new-image').value = "products/Blank Vial.png";
@@ -393,10 +446,13 @@
       e.preventDefault();
       if (!sbClient) return;
 
+      const selVendor = document.getElementById('new-vendor-select').value;
+      const finalVendor = selVendor === 'Other' ? (document.getElementById('new-vendor-custom').value.trim() || 'Custom') : selVendor;
+
       const newProduct = {
         id: document.getElementById('new-id').value.trim(),
         name: document.getElementById('new-name').value.trim(),
-        vendor: document.getElementById('new-vendor').value.trim() || 'Direct',
+        vendor: finalVendor,
         category: document.getElementById('new-category').value.trim(),
         price: parseFloat(document.getElementById('new-price').value) || 0,
         stock: parseInt(document.getElementById('new-stock').value) || 0,
@@ -441,12 +497,13 @@
         for (const item of localInventory) {
           const { error } = await sbClient.from('inventory').update({
             price: item.price,
-            stock: item.stock
+            stock: item.stock,
+            image: item.image
           }).eq('id', item.id);
 
           if (error) throw error;
         }
-        showStatus('✅ Inventory prices and stock saved successfully!', 'success');
+        showStatus('✅ Inventory prices, stock, and images saved successfully!', 'success');
         loadAdminInventory();
       } catch (err) {
         showStatus('⚠️ Failed to save changes: ' + err.message, 'error');
