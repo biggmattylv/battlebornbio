@@ -1,197 +1,510 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Battle Born BIO — Command Center</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Battle Born BIO — Applied Research Reagents</title>
+  <meta name="description" content="Battle Born BIO provides lot-verified research peptides and reference reagents. Strictly for research purposes only."/>
+  
+  <!-- Tailwind CSS & Supabase SDK -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
             cyber: {
-              black: '#0A0C10',
-              dark: '#12161F',
-              card: '#1A202C',
-              cyan: '#00F0FF',
-              pink: '#FF007F',
-              green: '#00FF66',
-              yellow: '#FFE600'
+              black: '#0a0a12',
+              card: '#121220',
+              pink: '#ff007f',
+              magenta: '#d800ff',
+              cyan: '#00f0ff',
+              yellow: '#ffe600',
+              border: '#2a2a40'
             }
+          },
+          boxShadow: {
+            'neon-pink': '0 0 15px rgba(255, 0, 127, 0.4)',
+            'neon-cyan': '0 0 15px rgba(0, 240, 255, 0.4)',
+            'neon-magenta': '0 0 15px rgba(216, 0, 255, 0.4)'
           }
         }
       }
     }
   </script>
   <style>
-    .neon-border-cyan { box-shadow: 0 0 10px #00F0FF, inset 0 0 10px #00F0FF; }
-    .neon-text-cyan { text-shadow: 0 0 8px #00F0FF; }
-    .neon-text-pink { text-shadow: 0 0 8px #FF007F; }
-    .neon-button {
-      background: linear-gradient(135deg, #00F0FF 0%, #FF007F 100%);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-    }
-    .neon-button:hover {
-      box-shadow: 0 0 25px rgba(255, 0, 127, 0.7);
-    }
+    body { background-color: #0a0a12; color: #e2e8f0; }
+    .glow-text-pink { text-shadow: 0 0 8px #ff007f; }
+    .glow-text-cyan { text-shadow: 0 0 8px #00f0ff; }
   </style>
 </head>
-<body class="bg-cyber-black text-stone-100 font-mono min-h-screen flex flex-col">
+<body class="bg-cyber-black text-slate-100 flex min-h-screen flex-col font-sans">
 
-  <!-- Password Authentication Screen -->
-  <div id="auth-screen" class="fixed inset-0 bg-cyber-black/95 z-50 flex items-center justify-center p-4">
-    <div class="bg-cyber-dark border border-cyber-cyan/40 p-8 rounded-2xl max-w-md w-full shadow-[0_0_30px_rgba(0,240,255,0.2)]">
-      <div class="text-center mb-6">
-        <h1 class="text-2xl font-bold tracking-widest text-cyber-cyan neon-text-cyan">BATTLE BORN BIO</h1>
-        <p class="text-xs text-cyber-pink uppercase tracking-widest mt-1">RESTRICTED ADMIN COMMAND CENTER</p>
-      </div>
-      <form onsubmit="authenticate(event)" class="space-y-4">
+  <!-- Header -->
+  <header class="border-b border-cyber-border bg-cyber-card/90 backdrop-blur sticky top-0 z-20">
+    <div class="bg-gradient-to-r from-cyber-pink via-cyber-magenta to-cyber-cyan text-black text-xs sm:text-sm text-center py-1.5 px-4 font-black tracking-widest uppercase">
+      ⚡ Battle Born BIO — Lot Verified Cyberpunk Research Hub ⚡
+    </div>
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3">
+      <a class="flex items-center gap-3" href="/">
+        <img src="brand/logo.jpg" alt="Battle Born BIO Logo" class="h-12 w-auto rounded-lg border border-cyber-pink/50 shadow-neon-pink" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
         <div>
-          <label class="block text-xs uppercase tracking-wider text-stone-400 mb-2">Access Key / Password</label>
-          <input type="password" id="admin-pass" required placeholder="••••••••••••" 
-            class="w-full bg-cyber-black border border-cyber-cyan/30 rounded px-4 py-3 text-cyber-cyan focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan"/>
+          <span class="block font-black text-xl text-white tracking-wider glow-text-cyan">BATTLE BORN BIO</span>
+          <span class="hidden sm:block text-[10px] uppercase tracking-widest text-cyber-pink font-bold">Applied Research · Est. 2026</span>
         </div>
-        <button type="submit" class="w-full neon-button text-black font-bold py-3 rounded uppercase tracking-wider transition duration-300">
-          Authorize Access →
+      </a>
+      <nav class="flex items-center gap-6 text-sm font-medium">
+        <a href="#catalog" class="text-slate-300 hover:text-cyber-cyan transition">Catalog</a>
+        <button onclick="toggleCart()" class="relative flex items-center gap-2 bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white font-bold px-4 py-2 rounded-lg hover:shadow-neon-pink transition">
+          🛒 Cart (<span id="cart-count">0</span>)
         </button>
-        <p id="auth-error" class="text-red-500 text-xs text-center hidden mt-2">ACCESS DENIED: Invalid Access Key</p>
-      </form>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <!-- Hero Section -->
+    <section class="relative border-b border-cyber-border py-16 px-5 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyber-card via-cyber-black to-cyber-black">
+      <div class="max-w-6xl mx-auto grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr]">
+        <div>
+          <img src="brand/logo.jpg" alt="Battle Born BIO Logo" class="h-20 w-auto mb-6 rounded-xl border border-cyber-cyan shadow-neon-cyan" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
+          <h1 class="text-3xl sm:text-5xl font-black mb-4 text-white tracking-tight">
+            PRECISION REAGENTS <br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-pink to-cyber-cyan">BUILT FOR RESEARCH</span>
+          </h1>
+          <p class="text-slate-400 text-lg leading-relaxed">Battle Born BIO stocks reference compounds in small batches so each lot can be rigorously tested. Certificates of Analysis are filed directly under each lot seal.</p>
+          <div class="mt-6 inline-flex items-center gap-2 rounded-full bg-cyber-pink/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-cyber-pink border border-cyber-pink/40 shadow-neon-pink">
+            ⚠️ Strictly for research purposes only. Not for human or veterinary use.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <section id="catalog" class="max-w-6xl mx-auto px-5 py-14">
+      <div class="mb-8 flex items-end justify-between border-b border-cyber-border pb-4">
+        <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">REAGENT CATALOG</h2>
+      </div>
+      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Loaded via JavaScript -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Slide-out Drawer Cart -->
+  <div id="cart-drawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex justify-end">
+    <div class="bg-cyber-card border-l border-cyber-magenta/50 w-full max-w-md h-full p-6 flex flex-col justify-between overflow-y-auto">
+      <div>
+        <div class="flex justify-between items-center border-b border-cyber-border pb-4 mb-4">
+          <h3 class="text-xl font-bold text-white tracking-wider glow-text-cyan">Research Reagent Order</h3>
+          <button onclick="toggleCart()" class="text-slate-400 hover:text-cyber-pink text-xl font-bold">✕</button>
+        </div>
+        
+        <div id="fs-success" class="hidden mb-4 p-4 bg-emerald-900/40 border border-emerald-500 text-emerald-300 text-sm rounded-lg font-medium">
+          ✅ Thank you! Your order request has been successfully submitted and stock updated.
+        </div>
+        <div id="fs-error" class="hidden mb-4 p-4 bg-rose-900/40 border border-rose-500 text-rose-300 text-sm rounded-lg font-medium">
+          ⚠️ Something went wrong submitting your order. Please try again.
+        </div>
+
+        <div id="cart-items" class="space-y-4">
+          <p class="text-slate-500 text-sm">Your order list is currently empty.</p>
+        </div>
+      </div>
+
+      <div class="border-t border-cyber-border pt-4 mt-6">
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-cyber-cyan mb-1 tracking-widest">PROMO CODE</label>
+          <div class="flex gap-2">
+            <input type="text" id="promo-input" placeholder="ENTER CODE" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm uppercase text-white focus:border-cyber-pink focus:outline-none"/>
+            <button type="button" onclick="applyPromoCode()" class="bg-cyber-pink text-white text-xs px-3 py-2 rounded font-bold hover:bg-cyber-magenta transition">Apply</button>
+          </div>
+          <p id="promo-msg" class="text-xs mt-1 font-semibold"></p>
+        </div>
+
+        <div class="space-y-1 mb-4 border-t border-cyber-border pt-2">
+          <div class="flex justify-between text-sm text-slate-400">
+            <span>Subtotal:</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <div id="discount-row" class="flex justify-between text-sm text-cyber-pink font-semibold hidden">
+            <span>Discount:</span>
+            <span id="cart-discount">-$0.00</span>
+          </div>
+          <div class="flex justify-between text-lg font-bold text-white pt-1">
+            <span>Estimated Total:</span>
+            <span id="cart-total" class="text-cyber-cyan glow-text-cyan">$0.00</span>
+          </div>
+        </div>
+
+        <form id="order-form" action="https://formspree.io/f/xgaevlnl" method="POST">
+          <input type="hidden" name="Order_Details" id="order-details-input"/>
+          <input type="hidden" name="Total_Amount" id="order-total-input"/>
+          <input type="hidden" name="Applied_Promo_Code" id="order-promo-input" value="None"/>
+
+          <div class="space-y-3 mb-4">
+            <input type="text" name="Institution_Name" placeholder="Institution / Company Name" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
+            <input type="email" name="Researcher_Email" placeholder="Researcher Email Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
+            <input type="text" name="Shipping_Address" placeholder="Shipping Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
+            <textarea name="Order_Notes" placeholder="Additional Research Notes (Optional)" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-sm text-white h-20 focus:border-cyber-cyan focus:outline-none"></textarea>
+          </div>
+
+          <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-cyber-pink via-cyber-magenta to-cyber-cyan text-black font-black py-3 rounded-lg hover:shadow-neon-pink transition disabled:opacity-50 uppercase tracking-widest">
+            Submit Order Request →
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
-  <!-- Main Cyberpunk Command Center Dashboard -->
-  <div id="dashboard" class="hidden flex-1 flex flex-col">
-    <!-- Top Navigation Bar -->
-    <header class="bg-cyber-dark border-b border-cyber-cyan/20 px-6 py-4 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <span class="h-3 w-3 rounded-full bg-cyber-green animate-pulse shadow-[0_0_8px_#00FF66]"></span>
-        <span class="font-bold text-lg text-cyber-cyan tracking-wider">BATTLE BORN BIO // SYS_ADMIN</span>
+  <!-- Details Pop-Up Modal -->
+  <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-cyber-card border border-cyber-cyan rounded-2xl max-w-2xl w-full overflow-hidden shadow-neon-cyan relative flex flex-col md:flex-row">
+      <button onclick="closeProductModal()" class="absolute top-3 right-3 text-slate-400 hover:text-cyber-pink text-xl font-bold bg-cyber-black rounded-full w-8 h-8 flex items-center justify-center z-10 border border-cyber-border">✕</button>
+      <div class="md:w-1/2 bg-cyber-black p-6 flex items-center justify-center border-r border-cyber-border">
+        <img id="modal-image" src="" alt="Product Vial" class="max-h-72 object-contain"/>
       </div>
-      <button onclick="logout()" class="text-xs text-stone-400 hover:text-cyber-pink border border-stone-700 hover:border-cyber-pink px-3 py-1.5 rounded transition">
-        TERMINATE SESSION
-      </button>
-    </header>
-
-    <div class="p-6 max-w-7xl mx-auto w-full space-y-8 flex-1">
-      
-      <!-- System Metrics -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-cyber-dark border border-cyber-cyan/30 p-5 rounded-xl shadow-[0_0_15px_rgba(0,240,255,0.1)]">
-          <div class="text-xs text-stone-400 uppercase tracking-widest">Active Inventory</div>
-          <div class="text-3xl font-bold text-cyber-cyan mt-1 neon-text-cyan" id="metric-products">12 SKUs</div>
+      <div class="md:w-1/2 p-6 flex flex-col justify-between">
+        <div>
+          <span id="modal-category" class="text-xs font-bold text-cyber-pink uppercase tracking-widest"></span>
+          <h2 id="modal-title" class="text-2xl font-black text-white mt-1"></h2>
+          <p id="modal-price" class="text-xl font-bold text-cyber-cyan mt-2"></p>
+          <p id="modal-desc" class="text-sm text-slate-300 mt-4 leading-relaxed"></p>
+          <div class="mt-4 border-t border-cyber-border pt-3 space-y-1 text-xs text-slate-400">
+            <div><strong>CAS Number:</strong> <span id="modal-cas" class="text-slate-200"></span></div>
+            <div><strong>Chemical Formula:</strong> <span id="modal-formula" class="text-slate-200"></span></div>
+            <div><strong>Purity Standard:</strong> <span class="text-cyber-cyan font-bold">≥98% Lot-Verified</span></div>
+          </div>
         </div>
-        <div class="bg-cyber-dark border border-cyber-pink/30 p-5 rounded-xl shadow-[0_0_15px_rgba(255,0,127,0.1)]">
-          <div class="text-xs text-stone-400 uppercase tracking-widest">Low Stock Items</div>
-          <div class="text-3xl font-bold text-cyber-pink mt-1 neon-text-pink" id="metric-lowstock">2 Vials</div>
-        </div>
-        <div class="bg-cyber-dark border border-cyber-green/30 p-5 rounded-xl shadow-[0_0_15px_rgba(0,255,102,0.1)]">
-          <div class="text-xs text-stone-400 uppercase tracking-widest">System Status</div>
-          <div class="text-3xl font-bold text-cyber-green mt-1">ONLINE</div>
-        </div>
-      </div>
-
-      <!-- Inventory Management Table -->
-      <div class="bg-cyber-dark border border-cyber-cyan/20 rounded-xl overflow-hidden">
-        <div class="p-5 border-b border-cyber-cyan/20 flex justify-between items-center">
-          <h2 class="text-lg font-bold text-cyber-cyan tracking-wider">INVENTORY CONTROL & STOCK OVERRIDE</h2>
-          <button onclick="addNewProduct()" class="bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan hover:text-black text-xs font-bold px-3 py-2 rounded transition">
-            + ADD NEW SKU
+        <div class="mt-6 space-y-2">
+          <a id="modal-coa-btn" href="#" target="_blank" class="w-full block text-center border border-cyber-cyan text-cyber-cyan py-2 rounded-lg text-sm font-bold hover:bg-cyber-cyan/10 transition">
+            📄 View Batch COA Document
+          </a>
+          <button id="modal-add-btn" class="w-full bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white py-3 rounded-lg font-bold hover:shadow-neon-pink transition">
+            + Add to Order Request
           </button>
         </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm text-stone-300">
-            <thead class="bg-cyber-black text-xs uppercase tracking-wider text-cyber-cyan border-b border-cyber-cyan/20">
-              <tr>
-                <th class="p-4">SKU / ID</th>
-                <th class="p-4">Product Name</th>
-                <th class="p-4">Category</th>
-                <th class="p-4">Unit Price ($)</th>
-                <th class="p-4">Stock Quantity</th>
-                <th class="p-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="inventory-table-body" class="divide-y divide-stone-800">
-              <!-- Loaded Dynamically via JS -->
-            </tbody>
-          </table>
-        </div>
       </div>
-
     </div>
   </div>
 
-  <script>
-    const SECRET_KEY = "battleborn2026"; // Change this to your preferred admin password
+  <!-- Footer -->
+  <footer class="border-t border-cyber-border bg-cyber-card mt-12">
+    <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="text-sm text-slate-400">
+        © 2026 <strong class="text-white">Battle Born BIO</strong>. All rights reserved.
+      </div>
+      <div class="text-xs text-cyber-pink font-bold uppercase tracking-widest">
+        Research Use Only · Not For Human Consumption
+      </div>
+    </div>
+  </footer>
 
-    let inventory = [
-      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor', price: 70.00, stock: 10 },
-      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor', price: 120.00, stock: 18 },
-      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptides', price: 50.00, stock: 25 },
-      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial', price: 65.00, stock: 3 },
-      { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial', price: 180.00, stock: 0 }
+  <!-- Script Engine -->
+  <script>
+    const SUPABASE_URL = 'https://talpzrqtbmducmcygfbc.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_6IxcTiIwPQPKqRIkJVT-IA_8J_QFs7n';
+    
+    let sbClient = null;
+    if (window.supabase && window.supabase.createClient) {
+      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // Default Fallback Dataset
+    let products = [
+      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.' },
+      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.' },
+      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.' },
+      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 0, image: 'brand/logo.jpg', description: 'Small-molecule compound studied for metabolic efficiency.' },
+      { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 0, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.' },
+      { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 0, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.' },
+      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 0, image: 'products/NAD+ 1000.png', description: 'Essential coenzyme studied for cellular energy balance.' },
+      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.' },
+      { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 0, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.' },
+      { id: '10', name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 0, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.' },
+      { id: '11', name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 0, image: 'products/Selank 10.png', description: 'Neuroprotective peptide reference reagent.' },
+      { id: '12', name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 0, image: 'products/Semax 10.png', description: 'Peptide analogue researched for cognitive analysis.' },
+      { id: '13', name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, stock: 0, image: 'products/Semaglutide 20.png', description: 'GLP-1 receptor agonist reference compound.' }
     ];
 
-    function authenticate(e) {
-      e.preventDefault();
-      const pass = document.getElementById('admin-pass').value;
-      if (pass === SECRET_KEY) {
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        renderAdminTable();
-      } else {
-        document.getElementById('auth-error').classList.remove('hidden');
+    let cart = [];
+    let appliedDiscountRate = 0;
+    let appliedPromoCodeName = "None";
+
+    async function fetchLiveInventory() {
+      renderProducts();
+      if (sbClient) {
+        try {
+          const { data, error } = await sbClient.from('inventory').select('*').order('id', { ascending: true });
+          if (!error && data && data.length > 0) {
+            products = data;
+            renderProducts();
+          }
+        } catch (err) {
+          console.log('Database sync offline, using fallback catalog.');
+        }
       }
     }
 
-    function logout() {
-      document.getElementById('auth-screen').classList.remove('hidden');
-      document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById('admin-pass').value = '';
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      if (!grid) return;
+
+      grid.innerHTML = products.map(p => {
+        const stockQty = p.stock !== undefined ? parseInt(p.stock) : 0;
+        const isOutOfStock = stockQty <= 0;
+        const displayImg = p.image || 'brand/logo.jpg';
+
+        return `
+          <div class="rounded-2xl border border-cyber-border bg-cyber-card overflow-hidden shadow-lg flex flex-col justify-between hover:border-cyber-pink transition duration-200">
+            <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
+              <div class="w-full h-64 bg-cyber-black flex items-center justify-center p-4 border-b border-cyber-border relative">
+                <img src="${encodeURI(displayImg)}" alt="${p.name}" class="max-h-full max-w-full object-contain hover:scale-105 transition duration-200 ${isOutOfStock ? 'opacity-40 grayscale' : ''}" onerror="this.src='brand/logo.jpg'"/>
+              </div>
+              <div class="p-5">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-xs font-bold text-cyber-pink uppercase tracking-widest">${p.category}</span>
+                  <span class="text-xs font-bold ${isOutOfStock ? 'text-rose-400 bg-rose-950/60 border border-rose-800' : 'text-cyber-cyan bg-cyber-cyan/10 border border-cyber-cyan/30'} px-2 py-0.5 rounded">
+                    ${isOutOfStock ? 'Sold Out' : `${stockQty} In Stock`}
+                  </span>
+                </div>
+                <h3 class="text-xl font-black text-white">${p.name}</h3>
+                <p class="text-sm text-slate-400 mt-2 line-clamp-2">${p.description || p.desc || ''}</p>
+              </div>
+            </div>
+            <div class="p-5 pt-0 flex items-center justify-between mt-4">
+              <span class="text-lg font-bold text-cyber-cyan glow-text-cyan">$${parseFloat(p.price).toFixed(2)}</span>
+              <div class="flex gap-2">
+                <button onclick="openProductModal('${p.id}')" class="border border-cyber-border text-slate-300 text-sm px-3 py-2 rounded-lg hover:border-cyber-cyan transition">Details</button>
+                <button onclick="addToCart('${p.id}')" ${isOutOfStock ? 'disabled' : ''} class="${isOutOfStock ? 'bg-slate-800 text-slate-600 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white hover:shadow-neon-pink'} text-sm px-4 py-2 rounded-lg transition font-bold">
+                  ${isOutOfStock ? 'Sold Out' : '+ Add'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    function renderAdminTable() {
-      const tbody = document.getElementById('inventory-table-body');
-      tbody.innerHTML = inventory.map((item, index) => `
-        <tr class="hover:bg-cyber-card/50 transition">
-          <td class="p-4 text-stone-500">#${item.id}</td>
-          <td class="p-4 font-bold text-white">${item.name}</td>
-          <td class="p-4 text-xs text-cyber-yellow uppercase">${item.category}</td>
-          <td class="p-4 text-cyber-cyan font-bold">$<input type="number" value="${item.price}" onchange="updatePrice(${index}, this.value)" class="bg-cyber-black border border-stone-700 w-20 px-2 py-1 rounded text-white"/></td>
-          <td class="p-4">
-            <input type="number" value="${item.stock}" onchange="updateStock(${index}, this.value)" 
-              class="bg-cyber-black border ${item.stock <= 5 ? 'border-cyber-pink text-cyber-pink' : 'border-cyber-green text-cyber-green'} w-20 px-2 py-1 rounded font-bold"/>
-          </td>
-          <td class="p-4">
-            <button onclick="saveItem(${index})" class="text-xs bg-cyber-green/20 border border-cyber-green text-cyber-green px-3 py-1 rounded hover:bg-cyber-green hover:text-black transition">
-              UPDATE
-            </button>
-          </td>
-        </tr>
-      `).join('');
+    function openProductModal(id) {
+      const product = products.find(p => p.id === String(id));
+      if (!product) return;
+      document.getElementById('modal-title').innerText = product.name;
+      document.getElementById('modal-category').innerText = product.category;
+      document.getElementById('modal-image').src = encodeURI(product.image || 'brand/logo.jpg');
+      document.getElementById('modal-price').innerText = `$${parseFloat(product.price).toFixed(2)}`;
+      document.getElementById('modal-desc').innerText = product.description || product.desc || '';
+      document.getElementById('modal-cas').innerText = product.cas || 'Lot-Specific';
+      document.getElementById('modal-formula').innerText = product.formula || 'Reference Grade';
+      document.getElementById('modal-coa-btn').href = product.coa || '#';
+      document.getElementById('modal-add-btn').onclick = function() { addToCart(product.id); closeProductModal(); };
+      document.getElementById('product-modal').classList.remove('hidden');
     }
 
-    function updateStock(index, val) {
-      inventory[index].stock = parseInt(val) || 0;
+    function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+
+    function addToCart(id) {
+      const item = products.find(p => p.id === String(id));
+      if (!item) return;
+
+      const cartItem = cart.find(c => c.id === String(id));
+      const currentCartQty = cartItem ? cartItem.qty : 0;
+      const availableStock = item.stock !== undefined ? parseInt(item.stock) : 0;
+
+      if (availableStock <= 0) {
+        alert('This item is currently out of stock.');
+        return;
+      }
+
+      if (currentCartQty >= availableStock) {
+        alert(`Stock limit reached. Only ${availableStock} vial(s) available.`);
+        return;
+      }
+
+      if (cartItem) { cartItem.qty++; } else { cart.push({ ...item, qty: 1 }); }
+      updateCartUI();
+      document.getElementById('cart-drawer').classList.remove('hidden');
     }
 
-    function updatePrice(index, val) {
-      inventory[index].price = parseFloat(val) || 0.00;
+    function updateQty(id, change) {
+      const item = cart.find(c => c.id === String(id));
+      if (!item) return;
+      item.qty += change;
+      if (item.qty <= 0) { cart = cart.filter(c => c.id !== String(id)); }
+      updateCartUI();
     }
 
-    function saveItem(index) {
-      alert(`Updated ${inventory[index].name}: Price $${inventory[index].price}, Stock: ${inventory[index].stock}`);
-      renderAdminTable();
+    function applyPromoCode() {
+      const codeInput = document.getElementById('promo-input').value.trim().toUpperCase();
+      const msg = document.getElementById('promo-msg');
+      const totalItemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+      if (codeInput === "SEAMLESS") {
+        appliedDiscountRate = 0.30;
+        appliedPromoCodeName = "SEAMLESS (30% Off Everything)";
+        msg.className = "text-xs mt-1 font-semibold text-emerald-400";
+        msg.innerText = "30% Private VIP Discount Applied!";
+      } else if (codeInput === "BIGG") {
+        if (totalItemCount >= 2) {
+          appliedDiscountRate = 0.15;
+          appliedPromoCodeName = "BIGG (15% Off 2+ Items)";
+          msg.className = "text-xs mt-1 font-semibold text-emerald-400";
+          msg.innerText = "15% Discount Applied!";
+        } else {
+          appliedDiscountRate = 0;
+          appliedPromoCodeName = "None";
+          msg.className = "text-xs mt-1 font-semibold text-amber-400";
+          msg.innerText = "BIGG requires purchasing 2 or more items.";
+          updateCartUI();
+          return;
+        }
+      } else if (codeInput === "RESEARCH10") {
+        appliedDiscountRate = 0.10;
+        appliedPromoCodeName = "RESEARCH10 (10% Off)";
+        msg.className = "text-xs mt-1 font-semibold text-emerald-400";
+        msg.innerText = "10% Discount Applied!";
+      } else if (codeInput === "BATTLEBORN20") {
+        appliedDiscountRate = 0.20;
+        appliedPromoCodeName = "BATTLEBORN20 (20% Off)";
+        msg.className = "text-xs mt-1 font-semibold text-emerald-400";
+        msg.innerText = "20% Discount Applied!";
+      } else if (codeInput === "") {
+        appliedDiscountRate = 0;
+        appliedPromoCodeName = "None";
+        msg.innerText = "";
+      } else {
+        appliedDiscountRate = 0;
+        appliedPromoCodeName = "None";
+        msg.className = "text-xs mt-1 font-semibold text-rose-400";
+        msg.innerText = "Invalid Promo Code";
+      }
+      updateCartUI();
     }
 
-    function addNewProduct() {
-      const name = prompt("Enter product name (e.g. Semaglutide 20mg):");
-      if (!name) return;
-      inventory.push({ id: String(inventory.length + 1), name: name, category: 'Peptides', price: 90.00, stock: 10 });
-      renderAdminTable();
+    function updateCartUI() {
+      const totalItemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').innerText = totalItemCount;
+
+      const cartContainer = document.getElementById('cart-items');
+      const subtotalContainer = document.getElementById('cart-subtotal');
+      const discountRow = document.getElementById('discount-row');
+      const discountContainer = document.getElementById('cart-discount');
+      const totalContainer = document.getElementById('cart-total');
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = '<p class="text-slate-500 text-sm">Your order list is empty.</p>';
+        subtotalContainer.innerText = '$0.00';
+        totalContainer.innerText = '$0.00';
+        discountRow.classList.add('hidden');
+        return;
+      }
+
+      let subtotal = 0;
+      let orderSummaryText = [];
+
+      cartContainer.innerHTML = cart.map(item => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+        orderSummaryText.push(`${item.name} (Qty: ${item.qty}) - $${itemTotal.toFixed(2)}`);
+        return `
+          <div class="flex justify-between items-center text-sm border-b border-cyber-border pb-2">
+            <div>
+              <div class="font-bold text-white">${item.name}</div>
+              <div class="text-slate-400">$${parseFloat(item.price).toFixed(2)} each</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center border border-cyber-border rounded bg-cyber-black">
+                <button type="button" onclick="updateQty('${item.id}', -1)" class="px-2 py-0.5 text-slate-300 font-bold hover:bg-cyber-card rounded-l">-</button>
+                <span class="px-2 text-xs font-bold text-white">${item.qty}</span>
+                <button type="button" onclick="updateQty('${item.id}', 1)" class="px-2 py-0.5 text-slate-300 font-bold hover:bg-cyber-card rounded-r">+</button>
+              </div>
+              <span class="font-bold text-cyber-cyan w-16 text-right">$${itemTotal.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const discountAmount = subtotal * appliedDiscountRate;
+      const finalTotal = subtotal - discountAmount;
+
+      subtotalContainer.innerText = `$${subtotal.toFixed(2)}`;
+      if (appliedDiscountRate > 0) {
+        discountRow.classList.remove('hidden');
+        discountContainer.innerText = `-$${discountAmount.toFixed(2)}`;
+      } else {
+        discountRow.classList.add('hidden');
+      }
+
+      totalContainer.innerText = `$${finalTotal.toFixed(2)}`;
+
+      document.getElementById('order-details-input').value = orderSummaryText.join(' | ');
+      document.getElementById('order-total-input').value = `$${finalTotal.toFixed(2)}`;
+      document.getElementById('order-promo-input').value = appliedPromoCodeName;
     }
+
+    function toggleCart() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
+
+    // Automatic Inventory Deduction & Order Handler
+    document.getElementById('order-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (cart.length === 0) {
+        alert('Please add items to your cart before submitting.');
+        return;
+      }
+
+      const form = e.target;
+      const data = new FormData(form);
+      const submitBtn = document.getElementById('submit-btn');
+      const successBox = document.getElementById('fs-success');
+      const errorBox = document.getElementById('fs-error');
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing & Updating Stock...";
+
+      try {
+        // 1. Deduct Stock in Supabase
+        if (sbClient) {
+          for (const item of cart) {
+            const currentItem = products.find(p => p.id === String(item.id));
+            if (currentItem) {
+              const currentStock = parseInt(currentItem.stock || 0);
+              const newStock = Math.max(0, currentStock - item.qty);
+              
+              await sbClient.from('inventory').update({ stock: newStock }).eq('id', item.id);
+              currentItem.stock = newStock;
+            }
+          }
+        }
+
+        // 2. Send Order Request to Formspree
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          successBox.classList.remove('hidden');
+          errorBox.classList.add('hidden');
+          cart = [];
+          form.reset();
+          updateCartUI();
+          renderProducts();
+        } else {
+          errorBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Submission error:', err);
+        errorBox.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit Order Request →";
+      }
+    });
+
+    fetchLiveInventory();
   </script>
 </body>
 </html>
