@@ -20,6 +20,7 @@
               pink: '#ff007f',
               magenta: '#d800ff',
               cyan: '#00f0ff',
+              yellow: '#ffe600',
               border: '#2a2a40'
             }
           },
@@ -34,35 +35,59 @@
   <style>
     body { background-color: #0a0a12; color: #e2e8f0; }
     .glow-text-cyan { text-shadow: 0 0 8px #00f0ff; }
+    .glow-text-pink { text-shadow: 0 0 8px #ff007f; }
   </style>
 </head>
-<body class="bg-cyber-black text-slate-100 min-h-screen p-6 font-sans">
+<body class="bg-cyber-black text-slate-100 min-h-screen flex font-sans">
 
-  <header class="max-w-6xl mx-auto flex items-center justify-between border-b border-cyber-border pb-6 mb-8">
-    <div class="flex items-center gap-3">
-      <img src="brand/logo.jpg" alt="Logo" class="h-10 w-auto rounded border border-cyber-cyan shadow-neon-cyan" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
-      <div>
-        <h1 class="text-2xl font-black text-white glow-text-cyan">CONTROL CENTER</h1>
-        <p class="text-xs text-cyber-pink font-bold uppercase tracking-widest">Inventory & Pricing Management</p>
+  <!-- Persistent Sidebar -->
+  <aside class="w-64 border-r border-cyber-border bg-cyber-card flex flex-col justify-between shrink-0 min-h-screen sticky top-0">
+    <div>
+      <div class="p-5 border-b border-cyber-border flex items-center gap-3">
+        <img src="brand/logo.jpg" alt="Logo" class="h-9 w-auto rounded border border-cyber-cyan shadow-neon-cyan" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
+        <div>
+          <span class="block font-black text-white text-base tracking-wider glow-text-cyan">BATTLE BORN</span>
+          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v2.0</span>
+        </div>
       </div>
-    </div>
-    <a href="/" target="_blank" class="text-xs bg-cyber-card border border-cyber-border text-slate-300 px-4 py-2 rounded-lg hover:border-cyber-cyan transition font-bold">
-      🌐 View Live Storefront →
-    </a>
-  </header>
 
-  <main class="max-w-6xl mx-auto">
+      <nav class="p-4 space-y-2">
+        <button onclick="switchTab('inventory')" id="nav-inventory" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm bg-cyber-pink/20 text-cyber-pink border border-cyber-pink/50 transition">
+          📦 Inventory Manager
+        </button>
+        <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-white hover:bg-cyber-black/50 border border-transparent transition">
+          🛒 Order Requests <span id="orders-badge" class="ml-auto bg-cyber-cyan/20 text-cyber-cyan text-xs px-2 py-0.5 rounded-full border border-cyber-cyan/40">0</span>
+        </button>
+        <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-500 cursor-not-allowed border border-transparent">
+          📊 Metrics & Sales <span class="ml-auto text-[10px] text-slate-600 uppercase font-mono">Soon</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-cyber-border">
+      <a href="/" target="_blank" class="w-full block text-center bg-cyber-black border border-cyber-border text-slate-300 text-xs py-2.5 rounded-lg hover:border-cyber-cyan transition font-bold">
+        🌐 View Live Storefront →
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Modular View Container -->
+  <main class="flex-1 p-8 max-w-7xl">
     <div id="status-msg" class="hidden mb-6 p-4 rounded-lg text-sm font-bold border"></div>
 
-    <div class="bg-cyber-card border border-cyber-border rounded-2xl p-6 shadow-xl">
-      <div class="flex justify-between items-center mb-6 border-b border-cyber-border pb-4">
-        <h2 class="text-lg font-bold text-white uppercase tracking-wider">Master Product Inventory</h2>
-        <button onclick="saveAllChanges()" class="bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:shadow-neon-pink transition">
-          💾 Save All Changes
+    <!-- MODULE 1: INVENTORY MANAGER -->
+    <section id="module-inventory" class="space-y-6">
+      <div class="flex justify-between items-center border-b border-cyber-border pb-4">
+        <div>
+          <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY MODULE</h2>
+          <p class="text-xs text-slate-400">Manage real-time vial stock, pricing, and GitHub image mappings.</p>
+        </div>
+        <button onclick="saveAllInventoryChanges()" class="bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:shadow-neon-pink transition">
+          💾 Save Inventory Changes
         </button>
       </div>
 
-      <div class="overflow-x-auto">
+      <div class="bg-cyber-card border border-cyber-border rounded-2xl p-6 shadow-xl overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-cyber-border text-xs uppercase tracking-widest text-slate-400 bg-cyber-black/50">
@@ -76,14 +101,49 @@
           </thead>
           <tbody id="inventory-rows" class="divide-y divide-cyber-border text-sm">
             <tr>
-              <td colspan="6" class="p-4 text-center text-slate-500">Loading live inventory from Supabase...</td>
+              <td colspan="6" class="p-4 text-center text-slate-500">Loading inventory from Supabase...</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
+
+    <!-- MODULE 2: ORDERS MANAGER -->
+    <section id="module-orders" class="space-y-6 hidden">
+      <div class="flex justify-between items-center border-b border-cyber-border pb-4">
+        <div>
+          <h2 class="text-2xl font-black text-white tracking-wider glow-text-cyan">ORDER REQUESTS MODULE</h2>
+          <p class="text-xs text-slate-400">Track and manage customer submissions, shipping addresses, and payment status.</p>
+        </div>
+        <button onclick="loadOrders()" class="bg-cyber-black border border-cyber-cyan text-cyber-cyan text-sm font-bold px-4 py-2 rounded-lg hover:bg-cyber-cyan/10 transition">
+          🔄 Refresh Orders
+        </button>
+      </div>
+
+      <div class="bg-cyber-card border border-cyber-border rounded-2xl p-6 shadow-xl overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-cyber-border text-xs uppercase tracking-widest text-slate-400 bg-cyber-black/50">
+              <th class="p-3">Date</th>
+              <th class="p-3">Researcher / Institution</th>
+              <th class="p-3">Order Items</th>
+              <th class="p-3">Total</th>
+              <th class="p-3">Promo</th>
+              <th class="p-3">Status</th>
+            </tr>
+          </thead>
+          <tbody id="orders-rows" class="divide-y divide-cyber-border text-sm">
+            <tr>
+              <td colspan="6" class="p-4 text-center text-slate-500">Loading order history from Supabase...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 
+  <!-- Script Engine & Module Router -->
   <script>
     const SUPABASE_URL = 'https://talpzrqtbmducmcygfbc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_6IxcTiIwPQPKqRIkJVT-IA_8J_QFs7n';
@@ -94,14 +154,32 @@
     }
 
     let localInventory = [];
+    let localOrders = [];
 
+    // Navigation Switcher
+    function switchTab(tab) {
+      document.getElementById('module-inventory').classList.add('hidden');
+      document.getElementById('module-orders').classList.add('hidden');
+
+      document.getElementById('nav-inventory').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-white hover:bg-cyber-black/50 border border-transparent transition";
+      document.getElementById('nav-orders').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-white hover:bg-cyber-black/50 border border-transparent transition";
+
+      if (tab === 'inventory') {
+        document.getElementById('module-inventory').classList.remove('hidden');
+        document.getElementById('nav-inventory').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm bg-cyber-pink/20 text-cyber-pink border border-cyber-pink/50 transition";
+      } else if (tab === 'orders') {
+        document.getElementById('module-orders').classList.remove('hidden');
+        document.getElementById('nav-orders').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm bg-cyber-cyan/20 text-cyber-cyan border border-cyber-cyan/50 transition";
+        loadOrders();
+      }
+    }
+
+    // --- INVENTORY MODULE LOGIC ---
     async function loadAdminInventory() {
       if (!sbClient) return;
-
       try {
         const { data, error } = await sbClient.from('inventory').select('*').order('id', { ascending: true });
         if (error) throw error;
-
         localInventory = data;
         renderAdminRows();
       } catch (err) {
@@ -153,10 +231,8 @@
       }
     }
 
-    async function saveAllChanges() {
+    async function saveAllInventoryChanges() {
       if (!sbClient) return;
-
-      const statusBox = document.getElementById('status-msg');
       showStatus('Saving changes to Supabase...', 'info');
 
       try {
@@ -169,11 +245,72 @@
 
           if (error) throw error;
         }
-
-        showStatus('✅ All inventory changes successfully saved to live database!', 'success');
+        showStatus('✅ Inventory changes saved!', 'success');
         loadAdminInventory();
       } catch (err) {
         showStatus('⚠️ Failed to save changes: ' + err.message, 'error');
+      }
+    }
+
+    // --- ORDERS MODULE LOGIC ---
+    async function loadOrders() {
+      if (!sbClient) return;
+      try {
+        const { data, error } = await sbClient.from('orders').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        localOrders = data || [];
+        document.getElementById('orders-badge').innerText = localOrders.length;
+        renderOrdersRows();
+      } catch (err) {
+        showStatus('Orders table not ready yet or empty. Please run the SQL setup snippet in Supabase.', 'info');
+      }
+    }
+
+    function renderOrdersRows() {
+      const tbody = document.getElementById('orders-rows');
+      if (!tbody) return;
+
+      if (localOrders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No order requests logged yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = localOrders.map((o) => {
+        const dateStr = new Date(o.created_at).toLocaleDateString() + ' ' + new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        return `
+          <tr class="hover:bg-cyber-black/30 transition">
+            <td class="p-3 text-xs text-slate-400 font-mono">${dateStr}</td>
+            <td class="p-3">
+              <div class="font-bold text-white text-sm">${o.researcher_email}</div>
+              <div class="text-xs text-slate-400">${o.institution_name || 'Individual Researcher'}</div>
+              <div class="text-[11px] text-slate-500 line-clamp-1">${o.shipping_address || ''}</div>
+            </td>
+            <td class="p-3 text-xs text-slate-300 font-mono max-w-xs">${o.order_details}</td>
+            <td class="p-3 font-bold text-cyber-cyan">${o.total_amount}</td>
+            <td class="p-3 text-xs font-semibold text-cyber-pink">${o.promo_code || 'None'}</td>
+            <td class="p-3">
+              <select onchange="updateOrderStatus(${o.id}, this.value)" class="bg-cyber-black border border-cyber-border rounded text-xs p-1.5 font-bold text-white focus:border-cyber-cyan focus:outline-none">
+                <option value="Pending" ${o.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+      if (!sbClient) return;
+      try {
+        const { error } = await sbClient.from('orders').update({ status: newStatus }).eq('id', orderId);
+        if (error) throw error;
+        showStatus(`Order #${orderId} marked as ${newStatus}`, 'success');
+      } catch (err) {
+        showStatus('Failed to update status: ' + err.message, 'error');
       }
     }
 
