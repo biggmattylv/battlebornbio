@@ -61,7 +61,7 @@
 
       <nav class="flex items-center gap-2 sm:gap-4 text-xs font-medium">
         <a href="#catalog" class="hidden md:block text-slate-300 hover:text-cyber-cyan transition">Catalog</a>
-        <a href="#blog" class="hidden sm:block text-slate-300 hover:text-cyber-cyan transition">Articles</a>
+        <a href="/blog.html" class="hidden sm:block text-slate-300 hover:text-cyber-cyan transition">Research Wire</a>
         <button onclick="toggleCart()" class="relative flex items-center gap-1 bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white font-bold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg hover:shadow-neon-pink transition text-xs shrink-0">
           🛒 <span class="hidden xs:inline">Cart</span> (<span id="cart-count">0</span>)
         </button>
@@ -101,47 +101,14 @@
 
     <section id="catalog" class="max-w-6xl mx-auto px-4 sm:px-5 py-8 sm:py-12">
       <div class="mb-6 sm:mb-8 flex items-end justify-between border-b border-cyber-border pb-4">
-        <h2 class="text-xl sm:text-2xl font-black text-white tracking-wider glow-text-pink">REAGENT CATALOG</h2>
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-white tracking-wider glow-text-pink">REAGENT CATALOG</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Click any compound card for full scientific breakdown and lot analytics.</p>
+        </div>
+        <a href="/blog.html" class="text-xs font-bold text-cyber-cyan hover:underline hidden sm:block">Explore Research Wire →</a>
       </div>
       <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         </div>
-    </section>
-
-    <section id="blog" class="max-w-6xl mx-auto px-4 sm:px-5 py-10 sm:py-14 border-t border-cyber-border">
-      <div class="mb-6 sm:mb-8 flex justify-between items-end border-b border-cyber-border pb-4">
-        <div>
-          <h2 class="text-xl sm:text-2xl font-black text-white tracking-wider glow-text-cyan">RESEARCH KNOWLEDGE BASE</h2>
-          <p class="text-xs text-slate-400">Educational analysis, mechanism breakdowns, and compound profiles.</p>
-        </div>
-      </div>
-
-      <div id="blog-posts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <article class="bg-cyber-card border border-cyber-border rounded-2xl p-5 sm:p-6 hover:border-cyber-cyan transition">
-          <span class="text-[10px] sm:text-xs font-bold text-cyber-pink uppercase tracking-widest">Compound Analysis · Est. 2026</span>
-          <h3 class="text-lg sm:text-xl font-black text-white mt-1 mb-2 sm:mb-3">Understanding Multi-Receptor Agonists: The R3 Synergy Mechanism</h3>
-          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
-            R3 operates through a triple-agonist binding structure engaging GIP, GLP-1, and Glucagon receptors concurrently. Unlike singular agonists, engagement of the glucagon pathway directly promotes energy expenditure while preserving lean metabolic tissue in experimental models...
-          </p>
-          <div class="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center border-t border-cyber-border pt-3 sm:pt-4">
-            <span class="text-[11px] sm:text-xs text-slate-500 font-mono">Lot Target: R3 (10mg / 20mg)</span>
-            <button onclick="addToCart('1')" class="w-full sm:w-auto bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan text-xs font-bold px-3 py-2 rounded hover:bg-cyber-cyan hover:text-black transition">
-              + Order R3 Reference
-            </button>
-          </div>
-        </article>
-
-        <article class="bg-cyber-card border border-cyber-border rounded-2xl p-5 sm:p-6 hover:border-cyber-cyan transition">
-          <span class="text-[10px] sm:text-xs font-bold text-cyber-pink uppercase tracking-widest">Analytics & Testing</span>
-          <h3 class="text-lg sm:text-xl font-black text-white mt-1 mb-2 sm:mb-3">Why Mass Spectrometry & HPLC Standards Matter in Reagent Selection</h3>
-          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
-            Purity variance in synthetic peptides can compromise cellular signaling experiments. High-Performance Liquid Chromatography guarantees lot-to-lot consistency by verifying sequence identity and ensuring heavy-metal trace residuals remain below analytical thresholds...
-          </p>
-          <div class="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center border-t border-cyber-border pt-3 sm:pt-4">
-            <span class="text-[11px] sm:text-xs text-slate-500 font-mono">Purity Standard: ≥98.0%</span>
-            <button onclick="document.getElementById('coa-search-input').focus();" class="text-xs font-bold text-cyber-pink hover:underline">Verify Lot in Nav Bar →</button>
-          </div>
-        </article>
-      </div>
     </section>
   </main>
 
@@ -152,12 +119,12 @@
       <div class="text-3xl sm:text-4xl mb-2">⚡</div>
       <h3 class="text-xl sm:text-2xl font-black text-white glow-text-pink">UNSAVED RESEARCH REQUEST!</h3>
       <p class="text-xs text-slate-300 mt-2 leading-relaxed">
-        Don't leave your research lot on hold. Use private code <strong class="text-cyber-yellow font-black">SEAMLESS</strong> during checkout to instantly unlock <strong class="text-cyber-cyan">30% OFF</strong> your entire order!
+        Don't leave your research lot on hold. Use code <strong class="text-cyber-yellow font-black">BATTLE</strong> during checkout to instantly unlock <strong class="text-cyber-cyan">20% OFF</strong> your entire order!
       </p>
 
       <div class="mt-5 space-y-2">
         <button onclick="applyExitDiscount()" class="w-full bg-gradient-to-r from-cyber-pink via-cyber-magenta to-cyber-cyan text-black font-black py-3 rounded-lg hover:shadow-neon-pink transition uppercase tracking-widest text-xs">
-          Claim 30% Off & Return To Order →
+          Claim 20% Off & Return To Order →
         </button>
         <button onclick="closeExitModal()" class="text-xs text-slate-500 hover:text-slate-300 py-1">
           No thanks, I will pay full price
@@ -208,7 +175,7 @@
             <span id="cart-subtotal">$0.00</span>
           </div>
           <div id="discount-row" class="flex justify-between text-cyber-pink font-semibold hidden">
-            <span>Automatic Bundle Discount:</span>
+            <span>Discount Applied:</span>
             <span id="cart-discount">-$0.00</span>
           </div>
           <div class="flex justify-between text-slate-400">
@@ -294,17 +261,23 @@
           <span id="modal-category" class="text-[10px] sm:text-xs font-bold text-cyber-pink uppercase tracking-widest"></span>
           <h2 id="modal-title" class="text-xl sm:text-2xl font-black text-white mt-1"></h2>
           <p id="modal-price" class="text-lg sm:text-xl font-bold text-cyber-cyan mt-1 sm:mt-2"></p>
-          <p id="modal-desc" class="text-xs sm:text-sm text-slate-300 mt-2 sm:mt-4 leading-relaxed"></p>
-          <div class="mt-3 sm:mt-4 border-t border-cyber-border pt-2 sm:pt-3 space-y-1 text-xs text-slate-400">
-            <div><strong>CAS Number:</strong> <span id="modal-cas" class="text-slate-200"></span></div>
-            <div><strong>Chemical Formula:</strong> <span id="modal-formula" class="text-slate-200"></span></div>
-            <div><strong>Purity Standard:</strong> <span class="text-cyber-cyan font-bold">≥98% Lot-Verified</span></div>
+          <p id="modal-desc" class="text-xs sm:text-sm text-slate-300 mt-2 sm:mt-3 leading-relaxed"></p>
+          
+          <div class="mt-3 bg-cyber-black/80 p-3 rounded-xl border border-cyber-border/80 space-y-1 text-xs">
+            <span class="block text-[10px] font-bold text-cyber-cyan uppercase tracking-widest mb-1">🔬 Scientific & Receptor Profile</span>
+            <p id="modal-research-note" class="text-[11px] text-slate-400 leading-relaxed"></p>
+          </div>
+
+          <div class="mt-3 border-t border-cyber-border pt-2 space-y-1 text-xs text-slate-400">
+            <div><strong>Purity Standard:</strong> <span class="text-cyber-cyan font-bold">≥98.0% Lot HPLC/MS Confirmed</span></div>
+            <div><strong>Storage Protocol:</strong> <span class="text-slate-200">Desiccated -20°C Sealed under Argon</span></div>
           </div>
         </div>
+
         <div class="mt-4 sm:mt-6 space-y-2">
-          <button onclick="closeProductModal(); document.getElementById('coa-search-input').focus();" class="w-full block text-center border border-cyber-cyan text-cyber-cyan py-2 rounded-lg text-xs sm:text-sm font-bold hover:bg-cyber-cyan/10 transition">
-            📄 Verify Lot COA in Nav Bar
-          </button>
+          <a href="/blog.html" class="w-full block text-center bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan py-2 rounded-lg text-xs sm:text-sm font-bold hover:bg-cyber-cyan hover:text-black transition">
+            📖 Read Research Wire Article →
+          </a>
           <button id="modal-add-btn" class="w-full bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white py-2.5 sm:py-3 rounded-lg font-bold hover:shadow-neon-pink transition text-xs sm:text-sm">
             + Add to Order Request
           </button>
@@ -333,21 +306,21 @@
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Default Catalog Dataset with NAD+ 500mg Updated Image Mapping
+    // Default Catalog Dataset with Scientific Notes Mapping
     let products = [
-      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.' },
-      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.' },
-      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.' },
-      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 10, image: 'products/5-Amino-1MQ 50.png', description: 'Small-molecule compound studied for metabolic efficiency.' },
-      { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 10, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.' },
-      { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 10, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.' },
-      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 10, image: 'products/NAD+ 500.png', description: 'Essential coenzyme studied for cellular energy balance.' },
-      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.' },
-      { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 10, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.' },
-      { id: '10', name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 10, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.' },
-      { id: '11', name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Selank 10.png', description: 'Neuroprotective peptide reference reagent.' },
-      { id: '12', name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Semax 10.png', description: 'Peptide analogue researched for cognitive analysis.' },
-      { id: '13', name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, stock: 10, image: 'products/Semaglutide 20.png', description: 'GLP-1 receptor agonist reference compound.' }
+      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.', researchNote: 'Evaluated in cellular assays for simultaneous binding across GIP, GLP-1, and glucagon receptor pathways.', hasArticle: true },
+      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.', researchNote: 'High-yield tri-agonist reference standard used in hepatic metabolic turnover studies.', hasArticle: true },
+      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.', researchNote: 'Functions via VEGFR2 pathway activation to evaluate nitric oxide and tendon-to-bone angiogenesis.', hasArticle: true },
+      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 10, image: 'products/5-Amino-1MQ 50.png', description: 'Small-molecule compound studied for metabolic efficiency.', researchNote: 'Selective NNMT inhibitor used in adipocyte and cellular energetic efficiency assays.', hasArticle: false },
+      { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 10, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.', researchNote: 'Copper tripeptide complex studied for collagen matrix remodeling and gene expression resets.', hasArticle: true },
+      { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 10, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.', researchNote: 'GHRH analogue evaluated for pituitary GH synthesis stimulation and visceral adipose lipid reduction.', hasArticle: false },
+      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 10, image: 'products/NAD+ 500.png', description: 'Essential coenzyme studied for cellular energy balance.', researchNote: 'Key coenzyme required for sirtuin activation and mitochondrial ATP synthesis assays.', hasArticle: false },
+      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.', researchNote: 'Selectively binds cardiolipin in the inner mitochondrial membrane to optimize electron transport.', hasArticle: false },
+      { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 10, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.', researchNote: 'High-yield tetrapeptide reference compound evaluated for ROS reduction in oxidative stress assays.', hasArticle: false },
+      { id: '10', name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 10, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.', researchNote: 'Mitochondrial-derived peptide examined for AMPK phosphorylation and insulin sensitivity regulation.', hasArticle: false },
+      { id: '11', name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Selank 10.png', description: 'Neuroprotective peptide reference reagent.', researchNote: 'Synthetic heptapeptide studied for BDNF expression and GABAergic neurotransmission stability.', hasArticle: false },
+      { id: '12', name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Semax 10.png', description: 'Peptide analogue researched for cognitive analysis.', researchNote: 'ACTH analogue evaluated for enkephalinase inhibition and CNS trophic factor upregulation.', hasArticle: false },
+      { id: '13', name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, stock: 10, image: 'products/Semaglutide 20.png', description: 'GLP-1 receptor agonist reference compound.', researchNote: 'Long-acting GLP-1 receptor agonist used in comparative glycemic and satiety signaling research.', hasArticle: false }
     ];
 
     let cart = [];
@@ -388,6 +361,7 @@
             <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
               <div class="w-full h-52 sm:h-64 bg-cyber-black flex items-center justify-center p-4 border-b border-cyber-border relative">
                 <img src="${encodeURI(displayImg)}" alt="${p.name}" class="max-h-full max-w-full object-contain hover:scale-105 transition duration-200 ${isOutOfStock ? 'opacity-40 grayscale' : ''}" onerror="this.src='brand/logo.jpg'"/>
+                ${p.hasArticle ? '<a href="/blog.html" onclick="event.stopPropagation()" class="absolute top-3 left-3 bg-cyber-black/90 border border-cyber-cyan text-cyber-cyan text-[10px] font-bold px-2 py-1 rounded shadow-neon-cyan hover:bg-cyber-cyan hover:text-black transition">📖 Article Available</a>' : ''}
               </div>
               <div class="p-4 sm:p-5">
                 <div class="flex justify-between items-center mb-1">
@@ -422,8 +396,7 @@
       document.getElementById('modal-image').src = encodeURI(product.image || 'brand/logo.jpg');
       document.getElementById('modal-price').innerText = `$${parseFloat(product.price).toFixed(2)}`;
       document.getElementById('modal-desc').innerText = product.description || product.desc || '';
-      document.getElementById('modal-cas').innerText = product.cas || 'Lot-Specific';
-      document.getElementById('modal-formula').innerText = product.formula || 'Reference Grade';
+      document.getElementById('modal-research-note').innerText = product.researchNote || 'Standard reference reagent synthesized for laboratory research protocols.';
       document.getElementById('modal-add-btn').onclick = function() { addToCart(product.id); closeProductModal(); };
       document.getElementById('product-modal').classList.remove('hidden');
     }
@@ -604,6 +577,11 @@
         appliedPromoCodeName = "SEAMLESS (30% Off)";
         msg.className = "text-xs mt-1 font-semibold text-emerald-400";
         msg.innerText = "30% Private VIP Discount Applied!";
+      } else if (codeInput === "BATTLE") {
+        appliedDiscountRate = 0.20;
+        appliedPromoCodeName = "BATTLE (20% Off)";
+        msg.className = "text-xs mt-1 font-semibold text-emerald-400";
+        msg.innerText = "20% Discount Applied!";
       } else if (codeInput === "BIGG") {
         appliedDiscountRate = 0.15;
         appliedPromoCodeName = "BIGG (15% Off)";
@@ -628,8 +606,8 @@
     function closeExitModal() { document.getElementById('exit-intent-modal').classList.add('hidden'); }
     
     function applyExitDiscount() {
-      appliedDiscountRate = 0.30;
-      appliedPromoCodeName = "SEAMLESS (30% Exit Recovery)";
+      appliedDiscountRate = 0.20;
+      appliedPromoCodeName = "BATTLE (20% Exit Recovery)";
       closeExitModal();
       updateCartUI();
       document.getElementById('cart-drawer').classList.remove('hidden');
