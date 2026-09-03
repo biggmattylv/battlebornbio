@@ -47,7 +47,7 @@
         <img src="brand/logo.jpg" alt="Logo" class="h-9 w-auto rounded border border-cyber-cyan shadow-neon-cyan" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
         <div>
           <span class="block font-black text-white text-base tracking-wider glow-text-cyan">BATTLE BORN</span>
-          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v2.6</span>
+          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v2.7</span>
         </div>
       </div>
 
@@ -83,7 +83,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-cyber-border pb-4">
         <div>
           <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY MODULE</h2>
-          <p class="text-xs text-slate-400">Manage vendor sources (Tina, Tong, Mavel, Preferred Vendor), pricing, images, stock levels, and product variants.</p>
+          <p class="text-xs text-slate-400">Locked database state active. Values persist permanently upon saving.</p>
         </div>
         <div class="flex gap-3">
           <button onclick="openAddModal()" class="bg-cyber-cyan text-black text-sm font-black px-4 py-2.5 rounded-lg hover:shadow-neon-cyan transition uppercase tracking-wider">
@@ -141,7 +141,7 @@
           </thead>
           <tbody id="inventory-rows" class="divide-y divide-cyber-border text-sm">
             <tr>
-              <td colspan="10" class="p-4 text-center text-slate-500">Loading inventory...</td>
+              <td colspan="10" class="p-4 text-center text-slate-500">Loading inventory from Supabase...</td>
             </tr>
           </tbody>
         </table>
@@ -385,7 +385,7 @@
       try {
         const { data, error } = await sbClient.from('inventory').select('*').order('id', { ascending: true });
         if (error) throw error;
-        localInventory = data;
+        localInventory = data || [];
         renderAdminRows();
         runKitCalculator();
       } catch (err) {
@@ -398,9 +398,9 @@
       if (!tbody) return;
 
       tbody.innerHTML = localInventory.map((item, index) => {
-        const stockNum = parseInt(item.stock || 0);
+        const stockNum = item.stock !== undefined && item.stock !== null ? parseInt(item.stock) : 10;
         const isOut = stockNum <= 0;
-        const kitCostVal = item.kit_cost || 180;
+        const kitCostVal = item.kit_cost !== undefined && item.kit_cost !== null ? parseFloat(item.kit_cost) : 180.00;
         const metrics = calculateVialMetrics(kitCostVal);
         const currentVendor = item.vendor || 'Preferred Vendor';
         const isKnownVendor = knownVendors.includes(currentVendor);
@@ -444,7 +444,7 @@
               $${metrics.target}
             </td>
             <td class="p-3">
-              <input type="number" step="0.01" value="${parseFloat(item.price).toFixed(2)}" 
+              <input type="number" step="0.01" value="${parseFloat(item.price || 0).toFixed(2)}" 
                 onchange="updateLocalValue(${index}, 'price', this.value)"
                 class="w-20 bg-cyber-black border border-cyber-border rounded p-1.5 text-xs text-cyber-cyan font-bold focus:border-cyber-cyan focus:outline-none"/>
             </td>
@@ -581,7 +581,6 @@
       }
     }
 
-    // COMPLETE SAVE FUNCTION (Saves Price, Stock, Image, Vendor & Kit Cost)
     async function saveAllInventoryChanges() {
       if (!sbClient) return;
       showStatus('Saving all inventory changes to Supabase...', 'info');
