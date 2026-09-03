@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,7 +47,7 @@
         <img src="brand/logo.jpg" alt="Logo" class="h-9 w-auto rounded border border-cyber-cyan shadow-neon-cyan" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
         <div>
           <span class="block font-black text-white text-base tracking-wider glow-text-cyan">BATTLE BORN</span>
-          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v2.5</span>
+          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v2.6</span>
         </div>
       </div>
 
@@ -84,7 +83,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-cyber-border pb-4">
         <div>
           <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY MODULE</h2>
-          <p class="text-xs text-slate-400">Manage vendor sources (Tina, Tong, Mavel), pricing, images, stock levels, and product variants.</p>
+          <p class="text-xs text-slate-400">Manage vendor sources (Tina, Tong, Mavel, Preferred Vendor), pricing, images, stock levels, and product variants.</p>
         </div>
         <div class="flex gap-3">
           <button onclick="openAddModal()" class="bg-cyber-cyan text-black text-sm font-black px-4 py-2.5 rounded-lg hover:shadow-neon-cyan transition uppercase tracking-wider">
@@ -192,7 +191,6 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Live RSS Source Manager -->
         <div class="bg-cyber-card border border-cyber-border rounded-2xl p-6 space-y-4 shadow-xl">
           <h3 class="text-sm font-black text-cyber-cyan uppercase tracking-widest">📡 Active RSS Feed Streams</h3>
           <p class="text-xs text-slate-400 leading-relaxed">
@@ -216,17 +214,8 @@
               <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-0.5 rounded">ACTIVE</span>
             </div>
           </div>
-
-          <div class="pt-2">
-            <label class="block text-[11px] font-bold text-slate-400 mb-1">Add Additional Custom RSS Feed URL</label>
-            <div class="flex gap-2">
-              <input type="text" id="custom-rss-url" placeholder="https://example.com/rss.xml" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-xs text-white font-mono focus:border-cyber-cyan focus:outline-none"/>
-              <button onclick="alert('RSS Source added! It will now stream directly to blog.html.');" class="bg-cyber-pink text-white font-bold text-xs px-3 py-2 rounded hover:bg-cyber-magenta transition shrink-0">+ Add Source</button>
-            </div>
-          </div>
         </div>
 
-        <!-- Quick Article Publisher -->
         <div class="bg-cyber-card border border-cyber-border rounded-2xl p-6 space-y-4 shadow-xl">
           <h3 class="text-sm font-black text-cyber-pink uppercase tracking-widest">📝 Publish Research Wire Post</h3>
           
@@ -279,6 +268,7 @@
           <div>
             <label class="block text-slate-400 mb-1 font-bold">Vendor / Supplier</label>
             <select id="new-vendor-select" onchange="toggleCustomVendorInput('new')" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none">
+              <option value="Preferred Vendor">Preferred Vendor</option>
               <option value="Tina">Tina</option>
               <option value="Tong">Tong</option>
               <option value="Mavel">Mavel</option>
@@ -314,7 +304,6 @@
         <div>
           <label class="block text-slate-400 mb-1 font-bold">Image Path in GitHub Products Folder</label>
           <input type="text" id="new-image" placeholder="products/NAD+ 500.png" value="products/Blank Vial.png" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-slate-300 font-mono focus:border-cyber-cyan focus:outline-none"/>
-          <span class="text-[10px] text-slate-500">Example: products/NAD+ 500.png</span>
         </div>
         <div>
           <label class="block text-slate-400 mb-1 font-bold">Description</label>
@@ -340,7 +329,7 @@
 
     let localInventory = [];
     let localOrders = [];
-    const knownVendors = ["Tina", "Tong", "Mavel"];
+    const knownVendors = ["Preferred Vendor", "Tina", "Tong", "Mavel"];
 
     function switchTab(tab) {
       document.getElementById('module-inventory').classList.add('hidden');
@@ -413,7 +402,7 @@
         const isOut = stockNum <= 0;
         const kitCostVal = item.kit_cost || 180;
         const metrics = calculateVialMetrics(kitCostVal);
-        const currentVendor = item.vendor || 'Tina';
+        const currentVendor = item.vendor || 'Preferred Vendor';
         const isKnownVendor = knownVendors.includes(currentVendor);
 
         return `
@@ -425,7 +414,8 @@
             </td>
             <td class="p-3">
               <div class="flex flex-col gap-1">
-                <select onchange="handleRowVendorChange(${index}, this.value)" class="w-24 bg-cyber-black border border-cyber-border rounded p-1 text-xs text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none">
+                <select onchange="handleRowVendorChange(${index}, this.value)" class="w-32 bg-cyber-black border border-cyber-border rounded p-1 text-xs text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none">
+                  <option value="Preferred Vendor" ${currentVendor === 'Preferred Vendor' ? 'selected' : ''}>Preferred Vendor</option>
                   <option value="Tina" ${currentVendor === 'Tina' ? 'selected' : ''}>Tina</option>
                   <option value="Tong" ${currentVendor === 'Tong' ? 'selected' : ''}>Tong</option>
                   <option value="Mavel" ${currentVendor === 'Mavel' ? 'selected' : ''}>Mavel</option>
@@ -434,7 +424,7 @@
                 <input type="text" id="custom-vendor-row-${index}" value="${!isKnownVendor ? currentVendor : ''}" 
                   onchange="updateLocalValue(${index}, 'vendor', this.value)"
                   placeholder="Custom Vendor"
-                  class="${!isKnownVendor ? '' : 'hidden'} w-24 bg-cyber-black border border-cyber-border rounded p-1 text-[11px] text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none"/>
+                  class="${!isKnownVendor ? '' : 'hidden'} w-32 bg-cyber-black border border-cyber-border rounded p-1 text-[11px] text-cyber-yellow font-bold focus:border-cyber-cyan focus:outline-none"/>
               </div>
             </td>
             <td class="p-3">
@@ -479,7 +469,7 @@
       const customInput = document.getElementById(`custom-vendor-row-${index}`);
       if (value === 'Other') {
         customInput.classList.remove('hidden');
-        localInventory[index].vendor = customInput.value || 'Custom';
+        localInventory[index].vendor = customInput.value || 'Custom Vendor';
       } else {
         customInput.classList.add('hidden');
         localInventory[index].vendor = value;
@@ -501,7 +491,7 @@
       if (!source) return;
 
       const nextId = String(localInventory.length + 1);
-      const sourceVendor = source.vendor || 'Tina';
+      const sourceVendor = source.vendor || 'Preferred Vendor';
       
       document.getElementById('modal-heading').innerText = `📋 Duplicate Variant from ${source.name}`;
       document.getElementById('new-id').value = nextId;
@@ -531,7 +521,7 @@
       document.getElementById('modal-heading').innerText = "➕ Add New Product";
       document.getElementById('add-product-form').reset();
       document.getElementById('new-id').value = nextId;
-      document.getElementById('new-vendor-select').value = "Tina";
+      document.getElementById('new-vendor-select').value = "Preferred Vendor";
       document.getElementById('new-vendor-custom').classList.add('hidden');
       document.getElementById('new-kit-cost').value = 180;
       document.getElementById('new-stock').value = 10;
@@ -548,12 +538,13 @@
       if (!sbClient) return;
 
       const selVendor = document.getElementById('new-vendor-select').value;
-      const finalVendor = selVendor === 'Other' ? (document.getElementById('new-vendor-custom').value.trim() || 'Custom') : selVendor;
+      const finalVendor = selVendor === 'Other' ? (document.getElementById('new-vendor-custom').value.trim() || 'Custom Vendor') : selVendor;
 
       const newProduct = {
         id: document.getElementById('new-id').value.trim(),
         name: document.getElementById('new-name').value.trim(),
         vendor: finalVendor,
+        kit_cost: parseFloat(document.getElementById('new-kit-cost').value) || 180,
         category: document.getElementById('new-category').value.trim(),
         price: parseFloat(document.getElementById('new-price').value) || 0,
         stock: parseInt(document.getElementById('new-stock').value) || 0,
@@ -586,25 +577,28 @@
 
     function updateLocalValue(index, field, value) {
       if (localInventory[index]) {
-        localInventory[index][field] = field === 'price' || field === 'stock' ? parseFloat(value) || 0 : value;
+        localInventory[index][field] = field === 'price' || field === 'stock' || field === 'kit_cost' ? parseFloat(value) || 0 : value;
       }
     }
 
+    // COMPLETE SAVE FUNCTION (Saves Price, Stock, Image, Vendor & Kit Cost)
     async function saveAllInventoryChanges() {
       if (!sbClient) return;
-      showStatus('Saving changes to Supabase...', 'info');
+      showStatus('Saving all inventory changes to Supabase...', 'info');
 
       try {
         for (const item of localInventory) {
           const { error } = await sbClient.from('inventory').update({
             price: item.price,
             stock: item.stock,
-            image: item.image
+            image: item.image,
+            vendor: item.vendor || 'Preferred Vendor',
+            kit_cost: item.kit_cost || 180.00
           }).eq('id', item.id);
 
           if (error) throw error;
         }
-        showStatus('✅ Inventory prices, stock, and images saved successfully!', 'success');
+        showStatus('✅ Inventory prices, stock, vendor, and kit costs saved permanently!', 'success');
         loadAdminInventory();
       } catch (err) {
         showStatus('⚠️ Failed to save changes: ' + err.message, 'error');
