@@ -333,7 +333,7 @@
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Default Catalog Dataset with Fixed 5-Amino-1MQ Image
+    // Default Catalog Dataset with NAD+ 500mg Updated Image Mapping
     let products = [
       { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.' },
       { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.' },
@@ -341,7 +341,7 @@
       { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 10, image: 'products/5-Amino-1MQ 50.png', description: 'Small-molecule compound studied for metabolic efficiency.' },
       { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 10, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.' },
       { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 10, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.' },
-      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 10, image: 'products/NAD+ 1000.png', description: 'Essential coenzyme studied for cellular energy balance.' },
+      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 10, image: 'products/NAD+ 500.png', description: 'Essential coenzyme studied for cellular energy balance.' },
       { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.' },
       { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 10, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.' },
       { id: '10', name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 10, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.' },
@@ -454,7 +454,6 @@
       updateCartUI();
     }
 
-    // Integrated Header Navigation COA Search
     function searchCOA() {
       const input = document.getElementById('coa-search-input').value.trim().toUpperCase();
       const drawer = document.getElementById('coa-result-drawer');
@@ -468,7 +467,7 @@
       drawer.classList.remove('hidden');
       box.classList.remove('border-emerald-500', 'text-emerald-300', 'border-cyber-pink', 'text-cyber-pink');
 
-      if (input.includes('R3') || input.includes('BPC') || input.includes('LOT') || input.includes('5-AMINO') || input.includes('GHK')) {
+      if (input.includes('R3') || input.includes('BPC') || input.includes('LOT') || input.includes('5-AMINO') || input.includes('NAD') || input.includes('GHK')) {
         box.classList.add('border-emerald-500', 'text-emerald-300');
         box.innerHTML = `
           <div>
