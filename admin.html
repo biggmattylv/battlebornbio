@@ -53,13 +53,10 @@
 
       <nav class="p-4 space-y-2">
         <button onclick="switchTab('inventory')" id="nav-inventory" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm bg-cyber-pink/20 text-cyber-pink border border-cyber-pink/50 transition">
-          📦 Inventory Manager
+          📦 Inventory & Pricing
         </button>
         <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-white hover:bg-cyber-black/50 border border-transparent transition">
           🛒 Order Requests <span id="orders-badge" class="ml-auto bg-cyber-cyan/20 text-cyber-cyan text-xs px-2 py-0.5 rounded-full border border-cyber-cyan/40">0</span>
-        </button>
-        <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-slate-500 cursor-not-allowed border border-transparent">
-          📊 Metrics & Sales <span class="ml-auto text-[10px] text-slate-600 uppercase font-mono">Soon</span>
         </button>
       </nav>
     </div>
@@ -71,37 +68,66 @@
     </div>
   </aside>
 
-  <!-- Main Modular View Container -->
+  <!-- Main Content View -->
   <main class="flex-1 p-8 max-w-7xl">
     <div id="status-msg" class="hidden mb-6 p-4 rounded-lg text-sm font-bold border"></div>
 
-    <!-- MODULE 1: INVENTORY MANAGER -->
+    <!-- MODULE 1: INVENTORY & COST CALCULATOR -->
     <section id="module-inventory" class="space-y-6">
       <div class="flex justify-between items-center border-b border-cyber-border pb-4">
         <div>
-          <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY MODULE</h2>
-          <p class="text-xs text-slate-400">Manage real-time vial stock, pricing, and GitHub image mappings.</p>
+          <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY & MARGIN CALCULATOR</h2>
+          <p class="text-xs text-slate-400">Calculate per-vial COGS (9 usable vials/kit + testing) and 30% margin target pricing.</p>
         </div>
         <button onclick="saveAllInventoryChanges()" class="bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:shadow-neon-pink transition">
           💾 Save Inventory Changes
         </button>
       </div>
 
+      <!-- Quick Kit Cost Estimator Bar -->
+      <div class="bg-cyber-card border border-cyber-cyan/40 rounded-2xl p-5 shadow-neon-cyan/20">
+        <h3 class="text-xs font-bold text-cyber-cyan uppercase tracking-widest mb-3">🧪 Quick Kit Cost & Margin Estimator</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-end text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1">Kit Cost ($)</label>
+            <input type="number" id="calc-kit-cost" placeholder="e.g. 180" value="180" oninput="runKitCalculator()" class="w-full bg-cyber-black border border-cyber-border p-2 rounded font-bold text-white focus:border-cyber-cyan focus:outline-none"/>
+          </div>
+          <div class="bg-cyber-black p-2 rounded border border-cyber-border">
+            <span class="block text-slate-500 text-[10px]">9 Usable Vials + 5%</span>
+            <span id="calc-gross-kit" class="font-bold text-slate-300">$189.47</span>
+          </div>
+          <div class="bg-cyber-black p-2 rounded border border-cyber-border">
+            <span class="block text-slate-500 text-[10px]">Total Cost w/ $45 Test</span>
+            <span id="calc-total-basis" class="font-bold text-slate-300">$234.47</span>
+          </div>
+          <div class="bg-cyber-black p-2 rounded border border-cyber-pink/50">
+            <span class="block text-cyber-pink text-[10px] font-bold">Cost Per Vial (COGS)</span>
+            <span id="calc-vial-cogs" class="font-black text-white text-sm">$26.05</span>
+          </div>
+          <div class="bg-cyber-black p-2 rounded border border-cyber-cyan">
+            <span class="block text-cyber-cyan text-[10px] font-bold">30% Margin Price (/0.70)</span>
+            <span id="calc-target-price" class="font-black text-cyber-cyan text-sm">$37.22</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Table -->
       <div class="bg-cyber-card border border-cyber-border rounded-2xl p-6 shadow-xl overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-cyber-border text-xs uppercase tracking-widest text-slate-400 bg-cyber-black/50">
               <th class="p-3">ID</th>
               <th class="p-3">Product Name</th>
-              <th class="p-3">Category</th>
-              <th class="p-3">Price ($)</th>
+              <th class="p-3">Kit Cost ($)</th>
+              <th class="p-3">COGS / Vial</th>
+              <th class="p-3">30% Target (/0.7)</th>
+              <th class="p-3">Live Retail Price ($)</th>
               <th class="p-3">Stock (Vials)</th>
-              <th class="p-3">Image Path</th>
             </tr>
           </thead>
           <tbody id="inventory-rows" class="divide-y divide-cyber-border text-sm">
             <tr>
-              <td colspan="6" class="p-4 text-center text-slate-500">Loading inventory from Supabase...</td>
+              <td colspan="7" class="p-4 text-center text-slate-500">Loading inventory from Supabase...</td>
             </tr>
           </tbody>
         </table>
@@ -143,7 +169,7 @@
 
   </main>
 
-  <!-- Script Engine & Module Router -->
+  <!-- Script Engine & Formula Handler -->
   <script>
     const SUPABASE_URL = 'https://talpzrqtbmducmcygfbc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_6IxcTiIwPQPKqRIkJVT-IA_8J_QFs7n';
@@ -156,7 +182,6 @@
     let localInventory = [];
     let localOrders = [];
 
-    // Navigation Switcher
     function switchTab(tab) {
       document.getElementById('module-inventory').classList.add('hidden');
       document.getElementById('module-orders').classList.add('hidden');
@@ -174,7 +199,35 @@
       }
     }
 
-    // --- INVENTORY MODULE LOGIC ---
+    // Formula Calculator Logic
+    function calculateVialMetrics(kitCost) {
+      const cost = parseFloat(kitCost) || 0;
+      if (cost <= 0) return { cogs: 0, target: 0 };
+
+      const grossKit = cost / 0.95;           // Add 5% margin buffer
+      const totalBasis = grossKit + 45.00;     // Add $45 shipping & testing overhead
+      const cogsPerVial = totalBasis / 9;      // Divide by 9 usable vials (1 tested)
+      const target30Margin = cogsPerVial / 0.70; // 30% margin target
+
+      return {
+        grossKit: grossKit.toFixed(2),
+        totalBasis: totalBasis.toFixed(2),
+        cogs: cogsPerVial.toFixed(2),
+        target: target30Margin.toFixed(2)
+      };
+    }
+
+    function runKitCalculator() {
+      const val = document.getElementById('calc-kit-cost').value;
+      const res = calculateVialMetrics(val);
+
+      document.getElementById('calc-gross-kit').innerText = `$${res.grossKit}`;
+      document.getElementById('calc-total-basis').innerText = `$${res.totalBasis}`;
+      document.getElementById('calc-vial-cogs').innerText = `$${res.cogs}`;
+      document.getElementById('calc-target-price').innerText = `$${res.target}`;
+    }
+
+    // INVENTORY MODULE LOGIC
     async function loadAdminInventory() {
       if (!sbClient) return;
       try {
@@ -182,6 +235,7 @@
         if (error) throw error;
         localInventory = data;
         renderAdminRows();
+        runKitCalculator();
       } catch (err) {
         showStatus('Error fetching database inventory: ' + err.message, 'error');
       }
@@ -194,12 +248,27 @@
       tbody.innerHTML = localInventory.map((item, index) => {
         const stockNum = parseInt(item.stock || 0);
         const isOut = stockNum <= 0;
+        const kitCostVal = item.kit_cost || 180;
+        const metrics = calculateVialMetrics(kitCostVal);
 
         return `
           <tr class="hover:bg-cyber-black/30 transition">
             <td class="p-3 font-mono text-slate-400">${item.id}</td>
-            <td class="p-3 font-bold text-white">${item.name}</td>
-            <td class="p-3 text-xs text-cyber-pink uppercase font-semibold">${item.category || 'General'}</td>
+            <td class="p-3 font-bold text-white">
+              ${item.name}
+              <div class="text-[10px] text-cyber-pink font-semibold">${item.category || 'General'}</div>
+            </td>
+            <td class="p-3">
+              <input type="number" value="${kitCostVal}" 
+                onchange="updateKitCost(${index}, this.value)"
+                class="w-24 bg-cyber-black border border-cyber-border rounded p-1.5 font-bold text-slate-200 focus:border-cyber-cyan focus:outline-none"/>
+            </td>
+            <td class="p-3 font-mono font-bold text-cyber-pink" id="cogs-cell-${index}">
+              $${metrics.cogs}
+            </td>
+            <td class="p-3 font-mono font-bold text-cyber-yellow" id="target-cell-${index}">
+              $${metrics.target}
+            </td>
             <td class="p-3">
               <input type="number" step="0.01" value="${parseFloat(item.price).toFixed(2)}" 
                 onchange="updateLocalValue(${index}, 'price', this.value)"
@@ -215,14 +284,18 @@
                 </span>
               </div>
             </td>
-            <td class="p-3 text-xs font-mono text-slate-400">
-              <input type="text" value="${item.image || ''}" 
-                onchange="updateLocalValue(${index}, 'image', this.value)"
-                class="w-full bg-cyber-black border border-cyber-border rounded p-1.5 text-slate-300 focus:border-cyber-cyan focus:outline-none"/>
-            </td>
           </tr>
         `;
       }).join('');
+    }
+
+    function updateKitCost(index, value) {
+      if (localInventory[index]) {
+        localInventory[index].kit_cost = parseFloat(value) || 0;
+        const metrics = calculateVialMetrics(value);
+        document.getElementById(`cogs-cell-${index}`).innerText = `$${metrics.cogs}`;
+        document.getElementById(`target-cell-${index}`).innerText = `$${metrics.target}`;
+      }
     }
 
     function updateLocalValue(index, field, value) {
@@ -240,19 +313,19 @@
           const { error } = await sbClient.from('inventory').update({
             price: item.price,
             stock: item.stock,
-            image: item.image
+            kit_cost: item.kit_cost || 180
           }).eq('id', item.id);
 
           if (error) throw error;
         }
-        showStatus('✅ Inventory changes saved!', 'success');
+        showStatus('✅ Inventory and Kit Cost metrics saved!', 'success');
         loadAdminInventory();
       } catch (err) {
         showStatus('⚠️ Failed to save changes: ' + err.message, 'error');
       }
     }
 
-    // --- ORDERS MODULE LOGIC ---
+    // ORDERS MODULE LOGIC
     async function loadOrders() {
       if (!sbClient) return;
       try {
@@ -263,7 +336,7 @@
         document.getElementById('orders-badge').innerText = localOrders.length;
         renderOrdersRows();
       } catch (err) {
-        showStatus('Orders table not ready yet or empty. Please run the SQL setup snippet in Supabase.', 'info');
+        showStatus('Orders table empty or not initialized.', 'info');
       }
     }
 
