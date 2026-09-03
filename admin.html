@@ -464,7 +464,6 @@
       submitBtn.innerText = "Processing & Updating Stock...";
 
       try {
-        // 1. Deduct Stock in Supabase
         if (sbClient) {
           for (const item of cart) {
             const currentItem = products.find(p => p.id === String(item.id));
@@ -478,7 +477,6 @@
           }
         }
 
-        // 2. Send Order Request to Formspree
         const response = await fetch(form.action, {
           method: 'POST',
           body: data,
