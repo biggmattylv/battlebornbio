@@ -6,6 +6,9 @@
   <title>Battle Born BIO — Applied Research Reagents</title>
   <meta name="description" content="Battle Born BIO provides lot-verified research peptides and reference reagents. Strictly for research purposes only."/>
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="brand/logo.jpg"/>
+
   <!-- Tailwind CSS & Supabase SDK -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -329,19 +332,19 @@
 
     // Default Catalog Dataset
     let products = [
-      { id: '1', name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.', researchNote: 'Evaluated in cellular assays for simultaneous binding across GIP, GLP-1, and glucagon receptor pathways.', hasArticle: true },
-      { id: '2', name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.', researchNote: 'High-yield tri-agonist reference standard used in hepatic metabolic turnover studies.', hasArticle: true },
-      { id: '3', name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.', researchNote: 'Functions via VEGFR2 pathway activation to evaluate nitric oxide and tendon-to-bone angiogenesis.', hasArticle: true },
-      { id: '4', name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 10, image: 'products/5-Amino-1MQ 50.png', description: 'Small-molecule compound studied for metabolic efficiency.', researchNote: 'Selective NNMT inhibitor used in adipocyte and cellular energetic efficiency assays.', hasArticle: false },
-      { id: '5', name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 10, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.', researchNote: 'Copper tripeptide complex studied for collagen matrix remodeling and gene expression resets.', hasArticle: true },
-      { id: '6', name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 10, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.', researchNote: 'GHRH analogue evaluated for pituitary GH synthesis stimulation and visceral adipose lipid reduction.', hasArticle: false },
-      { id: '7', name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 10, image: 'products/NAD+ 500.png', description: 'Essential coenzyme studied for cellular energy balance.', researchNote: 'Key coenzyme required for sirtuin activation and mitochondrial ATP synthesis assays.', hasArticle: false },
-      { id: '8', name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.', researchNote: 'Selectively binds cardiolipin in the inner mitochondrial membrane to optimize electron transport.', hasArticle: false },
-      { id: '9', name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 10, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.', researchNote: 'High-yield tetrapeptide reference compound evaluated for ROS reduction in oxidative stress assays.', hasArticle: false },
-      { id: '10', name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 10, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.', researchNote: 'Mitochondrial-derived peptide examined for AMPK phosphorylation and insulin sensitivity regulation.', hasArticle: false },
-      { id: '11', name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Selank 10.png', description: 'Neuroprotective peptide reference reagent.', researchNote: 'Synthetic heptapeptide studied for BDNF expression and GABAergic neurotransmission stability.', hasArticle: false },
-      { id: '12', name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Semax 10.png', description: 'Peptide analogue researched for cognitive analysis.', researchNote: 'ACTH analogue evaluated for enkephalinase inhibition and CNS trophic factor upregulation.', hasArticle: false },
-      { id: '13', name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, stock: 10, image: 'products/Semaglutide 20.png', description: 'GLP-1 receptor agonist reference compound.', researchNote: 'Long-acting GLP-1 receptor agonist used in comparative glycemic and satiety signaling research.', hasArticle: false }
+      { id: '1', display_order: 1, name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.', researchNote: 'Evaluated in cellular assays for simultaneous binding across GIP, GLP-1, and glucagon receptor pathways.', hasArticle: true },
+      { id: '2', display_order: 2, name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.', researchNote: 'High-yield tri-agonist reference standard used in hepatic metabolic turnover studies.', hasArticle: true },
+      { id: '3', display_order: 3, name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.', researchNote: 'Functions via VEGFR2 pathway activation to evaluate nitric oxide and tendon-to-bone angiogenesis.', hasArticle: true },
+      { id: '4', display_order: 4, name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 10, image: 'products/5-Amino-1MQ 50.png', description: 'Small-molecule compound studied for metabolic efficiency.', researchNote: 'Selective NNMT inhibitor used in adipocyte and cellular energetic efficiency assays.', hasArticle: false },
+      { id: '5', display_order: 5, name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 10, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.', researchNote: 'Copper tripeptide complex studied for collagen matrix remodeling and gene expression resets.', hasArticle: true },
+      { id: '6', display_order: 6, name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 10, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.', researchNote: 'GHRH analogue evaluated for pituitary GH synthesis stimulation and visceral adipose lipid reduction.', hasArticle: false },
+      { id: '7', display_order: 7, name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 10, image: 'products/NAD+ 500.png', description: 'Essential coenzyme studied for cellular energy balance.', researchNote: 'Key coenzyme required for sirtuin activation and mitochondrial ATP synthesis assays.', hasArticle: false },
+      { id: '8', display_order: 8, name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.', researchNote: 'Selectively binds cardiolipin in the inner mitochondrial membrane to optimize electron transport.', hasArticle: false },
+      { id: '9', display_order: 9, name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 10, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.', researchNote: 'High-yield tetrapeptide reference compound evaluated for ROS reduction in oxidative stress assays.', hasArticle: false },
+      { id: '10', display_order: 10, name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 10, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.', researchNote: 'Mitochondrial-derived peptide examined for AMPK phosphorylation and insulin sensitivity regulation.', hasArticle: false },
+      { id: '11', display_order: 11, name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Selank 10.png', description: 'Neuroprotective peptide reference reagent.', researchNote: 'Synthetic heptapeptide studied for BDNF expression and GABAergic neurotransmission stability.', hasArticle: false },
+      { id: '12', display_order: 12, name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Semax 10.png', description: 'Peptide analogue researched for cognitive analysis.', researchNote: 'ACTH analogue evaluated for enkephalinase inhibition and CNS trophic factor upregulation.', hasArticle: false },
+      { id: '13', display_order: 13, name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, stock: 10, image: 'products/Semaglutide 20.png', description: 'GLP-1 receptor agonist reference compound.', researchNote: 'Long-acting GLP-1 receptor agonist used in comparative glycemic and satiety signaling research.', hasArticle: false }
     ];
 
     let cart = [];
@@ -357,7 +360,7 @@
 
       if (sbClient) {
         try {
-          const { data, error } = await sbClient.from('inventory').select('*').order('id', { ascending: true });
+          const { data, error } = await sbClient.from('inventory').select('*').order('display_order', { ascending: true });
           if (!error && data && data.length > 0) {
             products = data;
             renderProducts();
