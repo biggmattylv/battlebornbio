@@ -45,40 +45,30 @@
 </head>
 <body class="bg-cyber-black text-slate-100 flex min-h-screen flex-col font-sans selection:bg-cyber-pink selection:text-white">
 
-  <!-- Header Banner with Integrated COA Search -->
+  <!-- Streamlined Header Banner -->
   <header class="border-b border-cyber-border bg-cyber-card/95 backdrop-blur sticky top-0 z-30">
     <div class="bg-gradient-to-r from-cyber-pink via-cyber-magenta to-cyber-cyan text-black text-[10px] sm:text-xs text-center py-1 px-2 font-black tracking-widest uppercase leading-tight">
       ⚠️ RESEARCH USE ONLY — NOT FOR HUMAN CONSUMPTION ⚠️
     </div>
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-5 py-2">
-      <a class="flex items-center gap-2" href="/">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5">
+      <a class="flex items-center gap-3" href="/">
         <img src="brand/logo.jpg" alt="Battle Born BIO Logo" class="h-9 sm:h-11 w-auto rounded-lg border border-cyber-pink/50 shadow-neon-pink shrink-0" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
-        <div class="hidden xs:block">
-          <span class="block font-black text-sm sm:text-lg text-white tracking-wider glow-text-cyan leading-none">BATTLE BORN</span>
-          <span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-cyber-pink font-bold block mt-0.5">Applied Research</span>
+        <div>
+          <span class="block font-black text-base sm:text-xl text-white tracking-wider glow-text-cyan leading-none">BATTLE BORN</span>
+          <span class="text-[8px] sm:text-[10px] uppercase tracking-widest text-cyber-pink font-bold block mt-0.5">Applied Research</span>
         </div>
       </a>
 
-      <!-- Compact Nav COA Search Bar -->
-      <div class="flex items-center gap-1.5 flex-1 max-w-[200px] sm:max-w-[280px]">
-        <input type="text" id="coa-search-input" placeholder="Verify Lot # (e.g. R3)" class="w-full bg-cyber-black border border-cyber-border px-2.5 py-1.5 rounded text-[11px] sm:text-xs text-white font-mono uppercase focus:border-cyber-cyan focus:outline-none"/>
-        <button onclick="searchCOA()" class="bg-cyber-cyan text-black font-black px-2.5 py-1.5 rounded hover:shadow-neon-cyan transition text-[10px] sm:text-xs uppercase tracking-wider shrink-0">Verify</button>
-      </div>
-
-      <nav class="flex items-center gap-2 sm:gap-4 text-xs font-medium">
-        <a href="#catalog" class="hidden md:block text-slate-300 hover:text-cyber-cyan transition">Catalog</a>
+      <nav class="flex items-center gap-3 sm:gap-6 text-xs sm:text-sm font-bold">
+        <a href="#catalog" class="text-slate-300 hover:text-cyber-cyan transition">Catalog</a>
+        <a href="#coa-section" class="text-slate-300 hover:text-cyber-cyan transition">Lot Verification</a>
         <a href="/blog.html" class="hidden sm:block text-slate-300 hover:text-cyber-cyan transition">Research Wire</a>
-        <button onclick="toggleCart()" class="relative flex items-center gap-1 bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white font-bold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg hover:shadow-neon-pink transition text-xs shrink-0">
-          🛒 <span class="hidden xs:inline">Cart</span> (<span id="cart-count">0</span>)
+        <button onclick="toggleCart()" class="relative flex items-center gap-1.5 bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white font-bold px-3 py-2 rounded-lg hover:shadow-neon-pink transition text-xs shrink-0">
+          🛒 Cart (<span id="cart-count">0</span>)
         </button>
       </nav>
     </div>
   </header>
-
-  <!-- COA Search Result Dropdown Drawer -->
-  <div id="coa-result-drawer" class="hidden max-w-6xl mx-auto px-4 w-full my-2">
-    <div id="coa-result-box" class="p-3 rounded-xl bg-cyber-card border text-xs flex justify-between items-center shadow-lg"></div>
-  </div>
 
   <main class="flex-1">
     <!-- Hero Section -->
@@ -108,6 +98,32 @@
       </div>
     </section>
 
+    <!-- NEW DEDICATED LOT VERIFICATION SECTION -->
+    <section id="coa-section" class="border-b border-cyber-border bg-cyber-card/60 py-6 sm:py-8 px-4 sm:px-5">
+      <div class="max-w-4xl mx-auto bg-cyber-black border border-cyber-cyan/50 p-5 sm:p-6 rounded-2xl shadow-neon-cyan">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-white glow-text-cyan flex items-center gap-2">
+              🔬 ANALYTICAL LOT VERIFICATION HUB
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">
+              Enter your vial lot number (e.g. <code>LOT-R3-001</code>) or product name (e.g. <code>R3</code>) to inspect HPLC/MS purity metrics and Certificates of Analysis.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <input type="text" id="coa-search-input" placeholder="Type Lot # or Compound Name (e.g. LOT-R3-001 or BPC-157)" class="w-full bg-cyber-card border border-cyber-border px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-white font-mono uppercase focus:border-cyber-cyan focus:outline-none"/>
+          <button onclick="searchCOA()" class="bg-gradient-to-r from-cyber-cyan to-cyber-magenta text-black font-black px-5 py-2.5 rounded-xl hover:shadow-neon-cyan transition text-xs uppercase tracking-wider shrink-0">
+            Verify Lot
+          </button>
+        </div>
+
+        <!-- Result Box -->
+        <div id="coa-result-box" class="hidden mt-4 p-4 rounded-xl bg-cyber-card border text-xs leading-relaxed"></div>
+      </div>
+    </section>
+
     <!-- Catalog Section -->
     <section id="catalog" class="max-w-6xl mx-auto px-4 sm:px-5 py-8 sm:py-12">
       <div class="mb-6 sm:mb-8 flex items-end justify-between border-b border-cyber-border pb-4">
@@ -123,17 +139,15 @@
     </section>
   </main>
 
-  <!-- EXIT-INTENT RECOVERY DRAWER / POPUP -->
+  <!-- EXIT-INTENT RECOVERY DRAWER -->
   <div id="exit-intent-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="bg-cyber-card border-2 border-cyber-pink rounded-2xl max-w-md w-full p-5 sm:p-6 text-center shadow-neon-pink relative max-h-[90vh] overflow-y-auto">
       <button onclick="closeExitModal()" class="absolute top-3 right-3 text-slate-400 hover:text-cyber-pink text-xl font-bold p-1">✕</button>
-      
       <div class="text-3xl sm:text-4xl mb-2">⚡</div>
       <h3 class="text-xl sm:text-2xl font-black text-white glow-text-pink">UNSAVED RESEARCH REQUEST!</h3>
       <p class="text-xs text-slate-300 mt-2 leading-relaxed">
         Don't leave your research lot on hold. Use code <strong class="text-cyber-yellow font-black">BATTLE</strong> during checkout to instantly unlock <strong class="text-cyber-cyan">20% OFF</strong> your entire order!
       </p>
-
       <div class="mt-5 space-y-2">
         <button onclick="applyExitDiscount()" class="w-full bg-gradient-to-r from-cyber-pink via-cyber-magenta to-cyber-cyan text-black font-black py-3 rounded-lg hover:shadow-neon-pink transition uppercase tracking-widest text-xs">
           Claim 20% Off & Return To Order →
@@ -206,9 +220,9 @@
 
         <!-- Checkout Form -->
         <form id="order-form" action="https://formspree.io/f/xgaevlnl" method="POST">
-          <!-- Invisible Honeypot Anti-Spam Field for Formspree -->
           <input type="text" name="_gotcha" style="display:none !important;" tabindex="-1" autocomplete="off"/>
-
+          <input type="hidden" name="_subject" value="New Battle Born BIO Reagent Order Request"/>
+          <input type="hidden" name="_format" value="plain"/>
           <input type="hidden" name="Order_Details" id="order-details-input"/>
           <input type="hidden" name="Total_Amount" id="order-total-input"/>
           <input type="hidden" name="Applied_Promo_Code" id="order-promo-input" value="None"/>
@@ -257,7 +271,7 @@
 
           <div class="space-y-2 mb-3">
             <input type="text" name="Institution_Name" placeholder="Institution / Lab / Alias Name" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-xs sm:text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
-            <input type="email" name="Researcher_Email" placeholder="Researcher Email Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-xs sm:text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
+            <input type="email" name="_replyto" placeholder="Researcher Email Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-xs sm:text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
             <input type="text" id="address-input" name="Shipping_Address" placeholder="Mailing / Shipping Address" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-xs sm:text-sm text-white focus:border-cyber-cyan focus:outline-none"/>
             <textarea name="Order_Notes" id="notes-input" placeholder="Additional Research Notes or Local Meetup Instructions (Optional)" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-xs sm:text-sm text-white h-14 focus:border-cyber-cyan focus:outline-none"></textarea>
           </div>
@@ -270,7 +284,7 @@
     </div>
   </div>
 
-  <!-- ENHANCED Product Details Modal with Scientific Breakdown & Article CTAs -->
+  <!-- Product Details Modal -->
   <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-cyber-card border border-cyber-cyan rounded-2xl max-w-2xl w-full overflow-hidden shadow-neon-cyan relative flex flex-col md:flex-row max-h-[90vh] overflow-y-auto">
       <button onclick="closeProductModal()" class="absolute top-3 right-3 text-slate-400 hover:text-cyber-pink text-xl font-bold bg-cyber-black rounded-full w-8 h-8 flex items-center justify-center z-10 border border-cyber-border">✕</button>
@@ -283,19 +297,15 @@
           <h2 id="modal-title" class="text-xl sm:text-2xl font-black text-white mt-1"></h2>
           <p id="modal-price" class="text-lg sm:text-xl font-bold text-cyber-cyan mt-1 sm:mt-2"></p>
           <p id="modal-desc" class="text-xs sm:text-sm text-slate-300 mt-2 sm:mt-3 leading-relaxed"></p>
-          
-          <!-- Scientific Breakdown Section -->
           <div class="mt-3 bg-cyber-black/80 p-3 rounded-xl border border-cyber-border/80 space-y-1 text-xs">
             <span class="block text-[10px] font-bold text-cyber-cyan uppercase tracking-widest mb-1">🔬 Scientific & Receptor Profile</span>
             <p id="modal-research-note" class="text-[11px] text-slate-400 leading-relaxed"></p>
           </div>
-
           <div class="mt-3 border-t border-cyber-border pt-2 space-y-1 text-xs text-slate-400">
             <div><strong>Purity Standard:</strong> <span class="text-cyber-cyan font-bold">≥98.0% Lot HPLC/MS Confirmed</span></div>
             <div><strong>Storage Protocol:</strong> <span class="text-slate-200">Desiccated -20°C Sealed under Argon</span></div>
           </div>
         </div>
-
         <div class="mt-4 sm:mt-6 space-y-2">
           <a href="/blog.html" class="w-full block text-center bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan py-2 rounded-lg text-xs sm:text-sm font-bold hover:bg-cyber-cyan hover:text-black transition">
             📖 Read Research Wire Article →
@@ -330,23 +340,7 @@
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Default Catalog Dataset
-    let products = [
-      { id: '1', display_order: 1, name: 'R3 (10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'Long-chain growth-factor analogue reagent.', researchNote: 'Evaluated in cellular assays for simultaneous binding across GIP, GLP-1, and glucagon receptor pathways.', hasArticle: true },
-      { id: '2', display_order: 2, name: 'R3 (20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'High-concentration growth-factor analogue reagent.', researchNote: 'High-yield tri-agonist reference standard used in hepatic metabolic turnover studies.', hasArticle: true },
-      { id: '3', display_order: 3, name: 'BPC-157 (10mg)', category: 'Peptide Reagents', price: 50.00, stock: 25, image: 'products/BPC-157 10.png', description: 'Pentadecapeptide reference reagent.', researchNote: 'Functions via VEGFR2 pathway activation to evaluate nitric oxide and tendon-to-bone angiogenesis.', hasArticle: true },
-      { id: '4', display_order: 4, name: '5-Amino-1MQ (50mg)', category: 'Small-Molecule Reagents', price: 60.00, stock: 10, image: 'products/5-Amino-1MQ 50.png', description: 'Small-molecule compound studied for metabolic efficiency.', researchNote: 'Selective NNMT inhibitor used in adipocyte and cellular energetic efficiency assays.', hasArticle: false },
-      { id: '5', display_order: 5, name: 'GHK-Cu (100mg)', category: 'Copper Peptides', price: 75.00, stock: 10, image: 'products/GHK-cu 100.png', description: 'Copper peptide complex studied for cellular signaling.', researchNote: 'Copper tripeptide complex studied for collagen matrix remodeling and gene expression resets.', hasArticle: true },
-      { id: '6', display_order: 6, name: 'Tesamorelin (10mg)', category: 'Peptide Analogues', price: 105.00, stock: 10, image: 'products/Tesamorelin 10.png', description: 'Growth hormone-releasing factor analogue.', researchNote: 'GHRH analogue evaluated for pituitary GH synthesis stimulation and visceral adipose lipid reduction.', hasArticle: false },
-      { id: '7', display_order: 7, name: 'NAD+ (500mg)', category: 'Coenzymes', price: 75.00, stock: 10, image: 'products/NAD+ 500.png', description: 'Essential coenzyme studied for cellular energy balance.', researchNote: 'Key coenzyme required for sirtuin activation and mitochondrial ATP synthesis assays.', hasArticle: false },
-      { id: '8', display_order: 8, name: 'SS-31 (10mg)', category: 'Mitochondrial Peptides', price: 65.00, stock: 5, image: 'products/SS-31 10.png', description: 'Mitochondria-targeted tetrapeptide reagent.', researchNote: 'Selectively binds cardiolipin in the inner mitochondrial membrane to optimize electron transport.', hasArticle: false },
-      { id: '9', display_order: 9, name: 'SS-31 (50mg)', category: 'Mitochondrial Peptides', price: 150.00, stock: 10, image: 'products/SS-31 50.png', description: 'High-yield mitochondria-targeted peptide reagent.', researchNote: 'High-yield tetrapeptide reference compound evaluated for ROS reduction in oxidative stress assays.', hasArticle: false },
-      { id: '10', display_order: 10, name: 'MOTS-C (20mg)', category: 'Mitochondrial Peptides', price: 75.00, stock: 10, image: 'products/Mots-C 20.png', description: 'Mitochondrial peptide studied for metabolic regulation.', researchNote: 'Mitochondrial-derived peptide examined for AMPK phosphorylation and insulin sensitivity regulation.', hasArticle: false },
-      { id: '11', display_order: 11, name: 'Selank (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Selank 10.png', description: 'Neuroprotective peptide reference reagent.', researchNote: 'Synthetic heptapeptide studied for BDNF expression and GABAergic neurotransmission stability.', hasArticle: false },
-      { id: '12', display_order: 12, name: 'Semax (10mg)', category: 'Nootropic Peptides', price: 65.00, stock: 10, image: 'products/Semax 10.png', description: 'Peptide analogue researched for cognitive analysis.', researchNote: 'ACTH analogue evaluated for enkephalinase inhibition and CNS trophic factor upregulation.', hasArticle: false },
-      { id: '13', display_order: 13, name: 'Semaglutide (20mg)', category: 'Peptide Analogues', price: 50.00, stock: 10, image: 'products/Semaglutide 20.png', description: 'GLP-1 receptor agonist reference compound.', researchNote: 'Long-acting GLP-1 receptor agonist used in comparative glycemic and satiety signaling research.', hasArticle: false }
-    ];
-
+    let products = [];
     let cart = [];
     let appliedDiscountRate = 0;
     let appliedPromoCodeName = "None";
@@ -356,18 +350,15 @@
     let hasShownExitModal = false;
 
     async function fetchLiveInventory() {
-      renderProducts();
-
       if (sbClient) {
         try {
           const { data, error } = await sbClient.from('inventory').select('*').order('display_order', { ascending: true });
           if (!error && data && data.length > 0) {
             products = data;
             renderProducts();
+            return;
           }
-        } catch (err) {
-          console.log('Database sync offline, using local fallback catalog.');
-        }
+        } catch (err) { console.log('Offline fallback active.'); }
       }
     }
 
@@ -412,6 +403,50 @@
       }).join('');
     }
 
+    async function searchCOA() {
+      const input = document.getElementById('coa-search-input').value.trim();
+      const box = document.getElementById('coa-result-box');
+
+      if (!input) {
+        box.classList.add('hidden');
+        return;
+      }
+
+      box.classList.remove('hidden', 'border-emerald-500', 'text-emerald-300', 'border-rose-500', 'text-rose-300');
+
+      if (sbClient) {
+        try {
+          const { data, error } = await sbClient
+            .from('batch_control')
+            .select('*')
+            .or(`lot_number.ilike.%${input}%,product_name.ilike.%${input}%`);
+
+          if (!error && data && data.length > 0) {
+            box.classList.add('border-emerald-500', 'text-slate-200');
+            box.innerHTML = data.map(b => `
+              <div class="border-b border-cyber-border/60 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-bold text-emerald-400 text-sm">✅ LOT VERIFIED: ${b.lot_number}</span>
+                  <span class="text-[10px] bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 px-2 py-0.5 rounded font-mono">${b.test_date || 'Lot Verified'}</span>
+                </div>
+                <div class="text-xs text-white font-bold">${b.product_name}</div>
+                <div class="grid grid-cols-2 gap-2 my-2 text-[11px] text-slate-300">
+                  <div>HPLC Purity: <strong class="text-cyber-cyan">${b.purity_percentage}%</strong></div>
+                  <div>Mass Spec: <strong class="text-cyber-cyan">${b.mass_spec_status}</strong></div>
+                </div>
+                ${b.notes ? `<div class="text-[10px] text-slate-400 italic mb-2">${b.notes}</div>` : ''}
+                ${b.coa_pdf_url && b.coa_pdf_url !== '#' ? `<a href="${b.coa_pdf_url}" target="_blank" class="inline-block bg-cyber-cyan text-black font-bold text-[10px] px-2.5 py-1 rounded hover:shadow-neon-cyan transition">📄 Download Lot Certificate PDF →</a>` : ''}
+              </div>
+            `).join('');
+            return;
+          }
+        } catch (err) {}
+      }
+
+      box.classList.add('border-rose-500', 'text-rose-300');
+      box.innerHTML = `⚠️ No matching Lot Certificate found for "<strong>${input}</strong>". Please check your lot seal or contact lab support.`;
+    }
+
     function openProductModal(id) {
       const product = products.find(p => p.id === String(id));
       if (!product) return;
@@ -449,37 +484,6 @@
       item.qty += change;
       if (item.qty <= 0) { cart = cart.filter(c => c.id !== String(id)); }
       updateCartUI();
-    }
-
-    function searchCOA() {
-      const input = document.getElementById('coa-search-input').value.trim().toUpperCase();
-      const drawer = document.getElementById('coa-result-drawer');
-      const box = document.getElementById('coa-result-box');
-
-      if (!input) {
-        drawer.classList.add('hidden');
-        return;
-      }
-
-      drawer.classList.remove('hidden');
-      box.classList.remove('border-emerald-500', 'text-emerald-300', 'border-cyber-pink', 'text-cyber-pink');
-
-      if (input.includes('R3') || input.includes('BPC') || input.includes('LOT') || input.includes('5-AMINO') || input.includes('NAD') || input.includes('GHK')) {
-        box.classList.add('border-emerald-500', 'text-emerald-300');
-        box.innerHTML = `
-          <div>
-            <div class="font-bold text-xs">✅ ANALYTICAL LOT VERIFIED (${input})</div>
-            <div class="text-[11px]">Purity: <strong>99.1% (HPLC Confirmed)</strong> · Mass Spec: <strong>Conforms</strong></div>
-          </div>
-          <button onclick="document.getElementById('coa-result-drawer').classList.add('hidden');" class="text-slate-400 hover:text-white font-bold text-xs ml-2">✕</button>
-        `;
-      } else {
-        box.classList.add('border-cyber-pink', 'text-cyber-pink');
-        box.innerHTML = `
-          <div class="text-[11px]">⚠️ Lot seal "${input}" not found in current lot database.</div>
-          <button onclick="document.getElementById('coa-result-drawer').classList.add('hidden');" class="text-slate-400 hover:text-white font-bold text-xs ml-2">✕</button>
-        `;
-      }
     }
 
     function updateCartUI() {
@@ -665,7 +669,7 @@
           }
 
           await sbClient.from('orders').insert([{
-            researcher_email: data.get('Researcher_Email'),
+            researcher_email: data.get('_replyto'),
             institution_name: data.get('Institution_Name'),
             shipping_address: data.get('Shipping_Address'),
             order_details: document.getElementById('order-details-input').value,
