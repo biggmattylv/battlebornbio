@@ -167,15 +167,15 @@
           <button onclick="toggleCart()" class="text-slate-400 hover:text-cyber-pink text-2xl font-bold p-1">✕</button>
         </div>
         
-        <!-- HIGH-CLARITY PAYMENT CONFIRMATION BOX -->
-        <div id="fs-success" class="hidden mb-4 p-4 bg-emerald-950/80 border-2 border-emerald-400 text-emerald-100 text-xs sm:text-sm rounded-xl font-medium shadow-lg">
-          <div class="font-black text-emerald-300 text-base mb-1 flex items-center gap-1.5">
-            ✅ ORDER REQUEST LOGGED SUCCESSFULLY
+        <!-- HIGH-VISIBILITY, ENLARGED PAYMENT CONFIRMATION CARD -->
+        <div id="fs-success" class="hidden mb-4 p-5 bg-cyber-black border-2 border-cyber-cyan text-slate-100 text-xs sm:text-sm rounded-2xl shadow-neon-cyan relative">
+          <div class="font-black text-cyber-cyan text-base sm:text-lg mb-1.5 flex items-center gap-2 glow-text-cyan">
+            ✅ ORDER RESERVED SUCCESSFULLY
           </div>
-          <p class="text-xs text-slate-200 leading-relaxed mb-3">
-            Your inventory allocation has been reserved. Please complete payment below to initiate immediate order dispatch.
+          <p class="text-xs text-slate-300 leading-relaxed mb-4">
+            Your inventory allocation is locked. Send your exact order total using the payment details below:
           </p>
-          <div id="payment-instructions-box" class="bg-cyber-black p-3.5 rounded-lg border border-emerald-500/60 text-xs text-white space-y-2"></div>
+          <div id="payment-instructions-box" class="space-y-3"></div>
         </div>
 
         <div id="fs-error" class="hidden mb-4 p-3 bg-rose-900/40 border border-rose-500 text-rose-300 text-xs sm:text-sm rounded-lg font-medium">
@@ -709,21 +709,29 @@
 
           if (currentPaymentMethod === "Crypto (USDT/BTC)") {
             paymentBox.innerHTML = `
-              <div class="font-black text-cyber-cyan text-sm uppercase tracking-wider mb-1">🪙 Crypto Payment Instructions:</div>
-              <p class="text-slate-300">Please send exactly <strong class="text-white">${finalTotal}</strong> in USDT (TRC-20) or Bitcoin (BTC) to:</p>
-              <div class="font-mono bg-cyber-card p-2 rounded border border-cyber-cyan text-xs text-cyber-cyan font-bold select-all my-1.5 break-all">
-                0x892a7B910dC2A182b7C392C1021429B382F
+              <div class="bg-cyber-black/90 p-4 rounded-xl border border-cyber-cyan space-y-2">
+                <div class="font-black text-cyber-cyan text-sm uppercase tracking-wider">🪙 CRYPTO PAYMENT ADDRESS:</div>
+                <div class="text-xs text-slate-300">Send exactly <strong class="text-white text-sm">${finalTotal}</strong> in USDT (TRC-20) or BTC to:</div>
+                <div class="font-mono bg-cyber-card p-2.5 rounded border border-cyber-cyan text-xs sm:text-sm text-cyber-cyan font-black select-all break-all">
+                  0x892a7B910dC2A182b7C392C1021429B382F
+                </div>
+                <div class="text-[11px] text-slate-400">Include your email address in the transfer memo for instant verification.</div>
               </div>
-              <div class="text-[11px] text-slate-400">Include your email address in the transaction note or reply to your email confirmation once sent.</div>
             `;
           } else {
             paymentBox.innerHTML = `
-              <div class="font-black text-cyber-cyan text-sm uppercase tracking-wider mb-1">⚡ Zelle Payment Instructions:</div>
-              <p class="text-slate-300">Send direct Zelle transfer for <strong class="text-white">${finalTotal}</strong> to:</p>
-              <div class="font-mono bg-cyber-card p-2 rounded border border-cyber-cyan text-sm text-cyber-cyan font-black select-all my-1.5">
-                me@mattysells.vegas
+              <div class="bg-cyber-black/90 p-4 rounded-xl border-2 border-cyber-cyan space-y-2 shadow-neon-cyan">
+                <div class="font-black text-cyber-cyan text-sm uppercase tracking-wider flex items-center gap-1.5">
+                  ⚡ ZELLE PAYMENT RECIPIENT:
+                </div>
+                <div class="text-xs text-slate-300">Send direct Zelle transfer for <strong class="text-white text-sm">${finalTotal}</strong> to:</div>
+                <div class="font-mono bg-cyber-card p-3 rounded-lg border-2 border-cyber-cyan text-base sm:text-lg text-cyber-cyan font-black select-all glow-text-cyan my-1 text-center tracking-wide">
+                  me@mattysells.vegas
+                </div>
+                <div class="text-[11px] text-slate-400 text-center font-medium">
+                  💡 Type <strong>me@mattysells.vegas</strong> into your Zelle app & include your email address in the note.
+                </div>
               </div>
-              <div class="text-[11px] text-slate-400">Include your Alias/Email in the Zelle memo for immediate order matching.</div>
             `;
           }
 
