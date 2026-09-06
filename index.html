@@ -167,11 +167,17 @@
           <button onclick="toggleCart()" class="text-slate-400 hover:text-cyber-pink text-2xl font-bold p-1">✕</button>
         </div>
         
-        <div id="fs-success" class="hidden mb-4 p-3 sm:p-4 bg-emerald-900/40 border border-emerald-500 text-emerald-300 text-xs sm:text-sm rounded-lg font-medium">
-          <div class="font-bold text-sm sm:text-base mb-1">✅ Order Request Submitted!</div>
-          <p class="text-xs leading-relaxed mb-2">Your order and inventory reservation have been logged.</p>
-          <div id="payment-instructions-box" class="bg-cyber-black p-3 rounded border border-emerald-500/50 text-xs text-white space-y-1"></div>
+        <!-- HIGH-CLARITY PAYMENT CONFIRMATION BOX -->
+        <div id="fs-success" class="hidden mb-4 p-4 bg-emerald-950/80 border-2 border-emerald-400 text-emerald-100 text-xs sm:text-sm rounded-xl font-medium shadow-lg">
+          <div class="font-black text-emerald-300 text-base mb-1 flex items-center gap-1.5">
+            ✅ ORDER REQUEST LOGGED SUCCESSFULLY
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed mb-3">
+            Your inventory allocation has been reserved. Please complete payment below to initiate immediate order dispatch.
+          </p>
+          <div id="payment-instructions-box" class="bg-cyber-black p-3.5 rounded-lg border border-emerald-500/60 text-xs text-white space-y-2"></div>
         </div>
+
         <div id="fs-error" class="hidden mb-4 p-3 bg-rose-900/40 border border-rose-500 text-rose-300 text-xs sm:text-sm rounded-lg font-medium">
           ⚠️ Something went wrong submitting your order. Please try again.
         </div>
@@ -339,7 +345,6 @@
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Default Catalog Dataset with Sales-Focused Copy
     let products = [
       { id: '1', display_order: 1, name: 'R3 (Retatrutide 10mg)', category: 'Growth-Factor Reagents', price: 70.00, stock: 10, image: 'products/R3 10.png', description: 'The absolute gold standard in metabolic research. R3 delivers breakthrough triple-agonist action across GIP, GLP-1, and Glucagon receptor pathways for unprecedented study efficiency.', researchNote: 'Evaluated in cellular assays for simultaneous binding across GIP, GLP-1, and glucagon receptor pathways.', hasArticle: true },
       { id: '2', display_order: 2, name: 'R3 (Retatrutide 20mg)', category: 'Growth-Factor Reagents', price: 120.00, stock: 18, image: 'products/R3 20.png', description: 'Maximum yield tri-agonist standard. Formulated for high-throughput laboratory models targeting deep metabolic turnover, intense satiety signaling, and rapid lipid turnover.', researchNote: 'High-yield tri-agonist reference standard used in hepatic metabolic turnover studies.', hasArticle: true },
@@ -504,7 +509,6 @@
       updateCartUI();
     }
 
-    // TIERED DISCOUNT CALCULATOR: 2 Vials = 10% OFF + FREE Shipping | 3+ Vials = 15% OFF + FREE Shipping
     function updateCartUI() {
       const totalItemCount = cart.reduce((sum, item) => sum + item.qty, 0);
       document.getElementById('cart-count').innerText = totalItemCount;
@@ -701,17 +705,25 @@
         const response = await fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
 
         if (response.ok) {
+          const finalTotal = document.getElementById('order-total-input').value;
+
           if (currentPaymentMethod === "Crypto (USDT/BTC)") {
             paymentBox.innerHTML = `
-              <div class="font-bold text-cyber-cyan mb-1">🪙 Crypto Payment:</div>
-              <div>Send <strong>${document.getElementById('order-total-input').value}</strong> in USDT (TRC-20) or BTC to:</div>
-              <div class="font-mono bg-cyber-card p-1.5 rounded text-[11px] text-cyber-pink select-all my-1">0x892a7B...B382F (USDT)</div>
+              <div class="font-black text-cyber-cyan text-sm uppercase tracking-wider mb-1">🪙 Crypto Payment Instructions:</div>
+              <p class="text-slate-300">Please send exactly <strong class="text-white">${finalTotal}</strong> in USDT (TRC-20) or Bitcoin (BTC) to:</p>
+              <div class="font-mono bg-cyber-card p-2 rounded border border-cyber-cyan text-xs text-cyber-cyan font-bold select-all my-1.5 break-all">
+                0x892a7B910dC2A182b7C392C1021429B382F
+              </div>
+              <div class="text-[11px] text-slate-400">Include your email address in the transaction note or reply to your email confirmation once sent.</div>
             `;
           } else {
             paymentBox.innerHTML = `
-              <div class="font-bold text-cyber-cyan mb-1">⚡ Zelle Payment:</div>
-              <div>Transfer <strong>${document.getElementById('order-total-input').value}</strong> via Zelle to:</div>
-              <div class="font-mono bg-cyber-card p-1.5 rounded text-[11px] text-cyber-pink select-all my-1">pay@battlebornbio.com</div>
+              <div class="font-black text-cyber-cyan text-sm uppercase tracking-wider mb-1">⚡ Zelle Payment Instructions:</div>
+              <p class="text-slate-300">Send direct Zelle transfer for <strong class="text-white">${finalTotal}</strong> to:</p>
+              <div class="font-mono bg-cyber-card p-2 rounded border border-cyber-cyan text-sm text-cyber-cyan font-black select-all my-1.5">
+                me@mattysells.vegas
+              </div>
+              <div class="text-[11px] text-slate-400">Include your Alias/Email in the Zelle memo for immediate order matching.</div>
             `;
           }
 
