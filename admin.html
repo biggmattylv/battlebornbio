@@ -50,7 +50,7 @@
         <img src="brand/logo.jpg" alt="Logo" class="h-9 w-auto rounded border border-cyber-cyan shadow-neon-cyan" onerror="this.src='https://via.placeholder.com/150?text=Logo'"/>
         <div>
           <span class="block font-black text-white text-base tracking-wider glow-text-cyan">BATTLE BORN</span>
-          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v3.3</span>
+          <span class="block text-[10px] text-cyber-pink font-bold uppercase tracking-widest">Control Hub v3.4</span>
         </div>
       </div>
 
@@ -88,15 +88,15 @@
     <section id="module-inventory" class="space-y-6">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-cyber-border pb-4">
         <div>
-          <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY & SEQUENTIAL CATALOG REORDERING</h2>
-          <p class="text-xs text-slate-400">Products display in strict numerical sequence from top to bottom (1, 2, 3...). Edit numbers to reorder, then click Save.</p>
+          <h2 class="text-2xl font-black text-white tracking-wider glow-text-pink">INVENTORY & CATALOG REORDERING</h2>
+          <p class="text-xs text-slate-400">Click <strong>✏️ Edit</strong> on any item to modify full text, photo paths, and pricing in a clean modal window.</p>
         </div>
         <div class="flex gap-3">
           <button onclick="openAddModal()" class="bg-cyber-cyan text-black text-sm font-black px-4 py-2.5 rounded-lg hover:shadow-neon-cyan transition uppercase tracking-wider">
             ➕ Add New Product
           </button>
           <button onclick="saveAllInventoryChanges()" class="bg-gradient-to-r from-cyber-pink to-cyber-magenta text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:shadow-neon-pink transition">
-            💾 Save All Changes
+            💾 Save Quick Edits
           </button>
         </div>
       </div>
@@ -109,7 +109,6 @@
               <th class="p-3">ID</th>
               <th class="p-3">Product Name</th>
               <th class="p-3">Vendor</th>
-              <th class="p-3">Image Path</th>
               <th class="p-3">Kit Cost ($)</th>
               <th class="p-3">COGS</th>
               <th class="p-3">Live Price ($)</th>
@@ -215,37 +214,68 @@
 
   </main>
 
-  <!-- ADD PRODUCT MODAL WITH CUSTOM POSITION ORDER -->
+  <!-- ADD / EDIT / DUPLICATE PRODUCT MODAL -->
   <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-cyber-card border border-cyber-cyan rounded-2xl max-w-lg w-full p-6 relative">
+    <div class="bg-cyber-card border border-cyber-cyan rounded-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
       <button onclick="closeAddModal()" class="absolute top-4 right-4 text-slate-400 hover:text-cyber-pink font-bold text-lg">✕</button>
       <h3 id="modal-heading" class="text-xl font-black text-white glow-text-cyan mb-4">➕ Add New Product</h3>
+      
       <form id="add-product-form" onsubmit="handleProductSubmit(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="edit-mode-flag" value="create"/>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-slate-400 mb-1 font-bold">Product ID (Unique)</label>
             <input type="text" id="new-id" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white font-mono focus:outline-none"/>
           </div>
           <div>
-            <label class="block text-slate-400 mb-1 font-bold">Display Order Position (1 = Top)</label>
+            <label class="block text-slate-400 mb-1 font-bold">Display Order (1 = Top)</label>
             <input type="number" id="new-display-order" value="1" required class="w-full bg-cyber-black border border-cyber-cyan p-2 rounded text-cyber-cyan font-bold focus:outline-none"/>
           </div>
         </div>
+
         <div>
           <label class="block text-slate-400 mb-1 font-bold">Product Name</label>
           <input type="text" id="new-name" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white font-bold focus:outline-none"/>
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 mb-1 font-bold">Price ($)</label>
+            <label class="block text-slate-400 mb-1 font-bold">Category</label>
+            <input type="text" id="new-category" placeholder="Peptide Reagents" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 font-bold">Vendor / Source</label>
+            <input type="text" id="new-vendor" placeholder="Preferred Vendor" class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-cyber-yellow font-bold focus:outline-none"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1 font-bold">Kit Cost ($)</label>
+            <input type="number" id="new-kit-cost" value="180" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-slate-200 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 font-bold">Retail Price ($)</label>
             <input type="number" step="0.01" id="new-price" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-cyber-cyan font-bold focus:outline-none"/>
           </div>
           <div>
-            <label class="block text-slate-400 mb-1 font-bold">Initial Stock</label>
+            <label class="block text-slate-400 mb-1 font-bold">Stock Count</label>
             <input type="number" id="new-stock" value="10" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white focus:outline-none"/>
           </div>
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-cyber-pink to-cyber-cyan text-black font-black py-3 rounded-lg uppercase tracking-widest mt-4">Save Product →</button>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-bold">Image Path in GitHub Products Folder</label>
+          <input type="text" id="new-image" placeholder="products/R3 10.png" value="products/Blank Vial.png" required class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-slate-300 font-mono focus:outline-none"/>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-bold">Sales Pitch / Product Description</label>
+          <textarea id="new-desc" placeholder="Write a short sales pitch for this compound..." class="w-full bg-cyber-black border border-cyber-border p-2 rounded text-white h-24 focus:outline-none leading-relaxed"></textarea>
+        </div>
+
+        <button type="submit" id="modal-submit-btn" class="w-full bg-gradient-to-r from-cyber-pink to-cyber-cyan text-black font-black py-3 rounded-lg uppercase tracking-widest mt-4">Save Product Changes →</button>
       </form>
     </div>
   </div>
@@ -328,7 +358,6 @@
       }
     }
 
-    // Fetches and sorts directly by display_order so Position 1 is at the top
     async function loadAdminInventory() {
       if (!sbClient) return;
       try {
@@ -353,12 +382,21 @@
           <td class="p-3 font-mono text-slate-400">${item.id}</td>
           <td class="p-3 font-bold text-white">${item.name}</td>
           <td class="p-3"><input type="text" value="${item.vendor || 'Preferred Vendor'}" onchange="updateLocalValue(${index}, 'vendor', this.value)" class="w-28 bg-cyber-black border border-cyber-border rounded p-1 text-xs text-cyber-yellow font-bold focus:outline-none"/></td>
-          <td class="p-3"><input type="text" value="${item.image || ''}" onchange="updateLocalValue(${index}, 'image', this.value)" class="w-28 bg-cyber-black border border-cyber-border rounded p-1 text-xs font-mono text-slate-300 focus:outline-none"/></td>
           <td class="p-3"><input type="number" value="${item.kit_cost || 180}" onchange="updateLocalValue(${index}, 'kit_cost', this.value)" class="w-20 bg-cyber-black border border-cyber-border rounded p-1 text-xs text-slate-200 focus:outline-none"/></td>
           <td class="p-3 text-xs font-mono text-cyber-pink">$${((parseFloat(item.kit_cost || 180)/0.95 + 45)/9).toFixed(2)}</td>
           <td class="p-3"><input type="number" step="0.01" value="${parseFloat(item.price || 0).toFixed(2)}" onchange="updateLocalValue(${index}, 'price', this.value)" class="w-20 bg-cyber-black border border-cyber-border rounded p-1 text-xs text-cyber-cyan font-bold focus:outline-none"/></td>
           <td class="p-3"><input type="number" value="${item.stock || 0}" onchange="updateLocalValue(${index}, 'stock', this.value)" class="w-16 bg-cyber-black border border-cyber-border rounded p-1 text-xs text-white focus:outline-none"/></td>
-          <td class="p-3 text-right"><button onclick="deleteProduct('${item.id}')" class="text-rose-400 hover:text-rose-200 font-bold text-xs">✕ Delete</button></td>
+          <td class="p-3 text-right">
+            <div class="flex items-center justify-end gap-1.5">
+              <button onclick="openEditModal('${item.id}')" class="bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan font-bold text-xs px-2 py-1 rounded hover:bg-cyber-cyan hover:text-black transition">
+                ✏️ Edit
+              </button>
+              <button onclick="duplicateProduct('${item.id}')" class="bg-cyber-pink/10 border border-cyber-pink text-cyber-pink font-bold text-xs px-2 py-1 rounded hover:bg-cyber-pink hover:text-white transition">
+                📋 Duplicate
+              </button>
+              <button onclick="deleteProduct('${item.id}')" class="text-rose-400 hover:text-rose-200 font-bold text-xs px-1">✕</button>
+            </div>
+          </td>
         </tr>
       `).join('');
     }
@@ -369,9 +407,132 @@
       }
     }
 
+    function openAddModal() {
+      document.getElementById('modal-heading').innerText = "➕ Add New Product";
+      document.getElementById('edit-mode-flag').value = "create";
+      document.getElementById('add-product-form').reset();
+      document.getElementById('new-id').disabled = false;
+      document.getElementById('new-id').value = String(localInventory.length + 1);
+      document.getElementById('new-display-order').value = (localInventory.length + 1);
+      document.getElementById('new-vendor').value = "Preferred Vendor";
+      document.getElementById('new-kit-cost').value = 180;
+      document.getElementById('new-stock').value = 10;
+      document.getElementById('new-image').value = "products/Blank Vial.png";
+      document.getElementById('modal-submit-btn').innerText = "Create New Product →";
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function openEditModal(id) {
+      const item = localInventory.find(p => p.id === String(id));
+      if (!item) return;
+
+      document.getElementById('modal-heading').innerText = `✏️ Edit Product #${item.id} (${item.name})`;
+      document.getElementById('edit-mode-flag').value = "edit";
+      
+      const idInput = document.getElementById('new-id');
+      idInput.value = item.id;
+      idInput.disabled = true; // Lock ID during edits
+
+      document.getElementById('new-display-order').value = item.display_order || 1;
+      document.getElementById('new-name').value = item.name || '';
+      document.getElementById('new-category').value = item.category || '';
+      document.getElementById('new-vendor').value = item.vendor || 'Preferred Vendor';
+      document.getElementById('new-kit-cost').value = item.kit_cost || 180;
+      document.getElementById('new-price').value = item.price || 0;
+      document.getElementById('new-stock').value = item.stock || 0;
+      document.getElementById('new-image').value = item.image || 'products/Blank Vial.png';
+      document.getElementById('new-desc').value = item.description || item.desc || '';
+
+      document.getElementById('modal-submit-btn').innerText = "Save Product Edits →";
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function duplicateProduct(id) {
+      const source = localInventory.find(p => p.id === String(id));
+      if (!source) return;
+
+      document.getElementById('modal-heading').innerText = `📋 Duplicate Variant from ${source.name}`;
+      document.getElementById('edit-mode-flag').value = "create";
+      
+      const idInput = document.getElementById('new-id');
+      idInput.disabled = false;
+      idInput.value = String(localInventory.length + 1);
+
+      document.getElementById('new-display-order').value = (localInventory.length + 1);
+      document.getElementById('new-name').value = `${source.name.split('(')[0].trim()} (40mg)`;
+      document.getElementById('new-category').value = source.category || '';
+      document.getElementById('new-vendor').value = source.vendor || 'Preferred Vendor';
+      document.getElementById('new-kit-cost').value = source.kit_cost || 180;
+      document.getElementById('new-price').value = (parseFloat(source.price) * 1.5).toFixed(2);
+      document.getElementById('new-stock').value = 10;
+      document.getElementById('new-image').value = source.image || 'products/Blank Vial.png';
+      document.getElementById('new-desc').value = source.description || source.desc || '';
+
+      document.getElementById('modal-submit-btn').innerText = "Save Duplicated Product →";
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+    }
+
+    async function handleProductSubmit(e) {
+      e.preventDefault();
+      if (!sbClient) return;
+
+      const isEdit = document.getElementById('edit-mode-flag').value === "edit";
+      const productId = document.getElementById('new-id').value.trim();
+
+      const payload = {
+        id: productId,
+        display_order: parseInt(document.getElementById('new-display-order').value) || 1,
+        name: document.getElementById('new-name').value.trim(),
+        category: document.getElementById('new-category').value.trim(),
+        vendor: document.getElementById('new-vendor').value.trim() || 'Preferred Vendor',
+        kit_cost: parseFloat(document.getElementById('new-kit-cost').value) || 180,
+        price: parseFloat(document.getElementById('new-price').value) || 0,
+        stock: parseInt(document.getElementById('new-stock').value) || 0,
+        image: document.getElementById('new-image').value.trim(),
+        description: document.getElementById('new-desc').value.trim()
+      };
+
+      showStatus('Saving product to database...', 'info');
+
+      try {
+        if (isEdit) {
+          const { error } = await sbClient.from('inventory').update(payload).eq('id', productId);
+          if (error) throw error;
+          showStatus(`✅ Product #${productId} updated successfully!`, 'success');
+        } else {
+          const { error } = await sbClient.from('inventory').insert([payload]);
+          if (error) throw error;
+          showStatus(`✅ Product "${payload.name}" created successfully!`, 'success');
+        }
+
+        closeAddModal();
+        loadAdminInventory();
+      } catch (err) {
+        showStatus('Failed to save product: ' + err.message, 'error');
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm(`Are you sure you want to delete Product #${id}?`)) return;
+      if (!sbClient) return;
+
+      try {
+        const { error } = await sbClient.from('inventory').delete().eq('id', id);
+        if (error) throw error;
+        showStatus(`Product #${id} removed.`, 'success');
+        loadAdminInventory();
+      } catch (err) {
+        showStatus('Failed to delete product: ' + err.message, 'error');
+      }
+    }
+
     async function saveAllInventoryChanges() {
       if (!sbClient) return;
-      showStatus('Saving inventory...', 'info');
+      showStatus('Saving table edits...', 'info');
       try {
         for (const item of localInventory) {
           await sbClient.from('inventory').update({ 
@@ -383,7 +544,7 @@
             display_order: item.display_order 
           }).eq('id', item.id);
         }
-        showStatus('✅ Inventory sequence, pricing, and stock saved permanently!', 'success');
+        showStatus('✅ Inventory quick edits saved permanently!', 'success');
         loadAdminInventory();
       } catch (err) { showStatus('Failed to save: ' + err.message, 'error'); }
     }
